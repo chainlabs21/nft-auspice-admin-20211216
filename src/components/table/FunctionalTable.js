@@ -37,6 +37,8 @@ const MAX_FILTER_NUMBER = 3;
 const FunctionalTable = ({
   keyList,
   tableData,
+  wrapName = false,
+  title = false,
   refresh = false,
   refreshCallback = () => {},
   search = false,
@@ -258,14 +260,21 @@ const FunctionalTable = ({
 
   return (
     <>
-      <Row>
+      <Row className={wrapName ? wrapName : ""}>
         <Col>
           <Card>
             <Card.Body>
               <Container
                 className={clean ? "d-none" : ""}
-                style={{ marginBottom: "2rem", marginTop: "1rem" }}
+                style={{ marginBottom: "1.5rem", marginTop: "1rem" }}
               >
+                <h3
+                  className={title ? "" : "d-none"}
+                  style={{ display: "inline-block", margin: 0 }}
+                >
+                  {title}
+                </h3>
+
                 <FuncWrapper className={search ? "" : "d-none"}>
                   <InputGroup style={{ marginRight: "50px" }}>
                     <InputGroupWrapper>
@@ -361,7 +370,13 @@ const FunctionalTable = ({
                   </FuncWrapper>
                 </FuncWrapper>
                 <RightIcons>
-                  <Container style={{ display: "flex", marginBottom: "1rem" }}>
+                  <Container
+                    style={{
+                      display: "flex",
+                      marginBottom: "1rem",
+                      height: "43px",
+                    }}
+                  >
                     {filterArr.length > 0 ? (
                       <>
                         {filterArr.map((v, i) => {
@@ -508,12 +523,7 @@ const FunctionalTable = ({
                             }
                             if (refinedKeyList[j].hasCallback) {
                               return (
-                                <td
-                                  key={j}
-                                  onClick={() => {
-                                    v.callback(i);
-                                  }}
-                                >
+                                <td key={j} onClick={() => v.callback(i)}>
                                   {v.icon}
                                 </td>
                               );

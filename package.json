@@ -2,7 +2,6 @@
   "name": "able-pro-v16.13.0",
   "version": "16.13.0",
   "private": true,
-  "homepage": "http://demo.codedthemes.com/able-pro/react/default/",
   "dependencies": {
     "@ckeditor/ckeditor5-build-balloon": "^26.0.0",
     "@ckeditor/ckeditor5-build-classic": "^26.0.0",

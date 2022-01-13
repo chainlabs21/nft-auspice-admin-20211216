@@ -52,21 +52,22 @@ const ItemDetail = () => {
     const temp = JsonToTableData(itemDetail.activityList, keyToValue);
     setTableData(temp);
   }, [itemDetail]);
+
   return (
-    <Container fluid>
+    <Container className="userDetail" fluid>
       <Row style={{ marginTop: "6rem" }}>
         <Col>
-          <PageTitle title="아이템 상세" />
+          <PageTitle title="아이템 상세" margin={1.5} />
         </Col>
       </Row>
-      <Row>
+      <Row className="infoList">
         <Col>
           <Card>
             <Card.Body>
               <Container>
                 <Row
                   style={{
-                    marginBottom: "2rem",
+                    margin: "0 0 1.5rem 20px",
                   }}
                 >
                   <Col>
@@ -74,9 +75,10 @@ const ItemDetail = () => {
                   </Col>
                 </Row>
                 <Row
+                  className="itemList"
                   style={{
-                    paddingRight: "5rem",
-                    paddingLeft: "5rem",
+                    paddingRight: "14rem",
+                    paddingLeft: "14rem",
                   }}
                 >
                   <Col>
@@ -98,8 +100,10 @@ const ItemDetail = () => {
                     </div>
                     <div>
                       <TitleWrapper>로얄티 설정 :</TitleWrapper>
-                      <UnitValueWrapper>{itemDetail.royal}</UnitValueWrapper>
-                      <UnitWrapper>%</UnitWrapper>
+                      <UnitValueWrapper>
+                        <div className="valueBox">{itemDetail.royal}</div>
+                        <div className="unitBox">%</div>
+                      </UnitValueWrapper>
                     </div>
                     <div>
                       <TitleWrapper>아이템 토큰 :</TitleWrapper>
@@ -164,8 +168,10 @@ const ItemDetail = () => {
                     </div>
                     <div>
                       <TitleWrapper>레퍼럴 설정 :</TitleWrapper>
-                      <UnitValueWrapper>{itemDetail.refer}</UnitValueWrapper>
-                      <UnitWrapper>%</UnitWrapper>
+                      <UnitValueWrapper>
+                        <div className="valueBox">{itemDetail.refer}</div>
+                        <div className="unitBox">%</div>
+                      </UnitValueWrapper>
                     </div>
                     <div>
                       <TitleWrapper>좋아요 :</TitleWrapper>
@@ -187,8 +193,9 @@ const ItemDetail = () => {
                 </Row>
                 <Row style={{ marginTop: "2rem" }}>
                   <Col>
-                    <h3 style={{ marginBottom: "2rem" }}>Item Activity</h3>
                     <FunctionalTable
+                      wrapName="itemActivityBox"
+                      title="Item Activity"
                       tableData={tableData}
                       keyList={keyList}
                       excel
@@ -206,37 +213,42 @@ const ItemDetail = () => {
 };
 export default ItemDetail;
 const UnitValueWrapper = styled.div`
-  display: inline-block;
-  width: 250px;
-  border: 1px solid lightgrey;
-  padding: 10px;
-  margin-bottom: 1rem;
-`;
-const UnitWrapper = styled.div`
-  display: inline-block;
-  width: 50px;
-  padding: 10px;
-  text-align: center;
-  background-color: lightgrey;
-  border: 1px solid lightgrey;
-  margin-bottom: 1rem;
+  display: inline-flex;
+  width: 400px;
+
+  .valueBox {
+    flex: 1;
+    display: inline-block;
+    width: 250px;
+    border: 1px solid lightgrey;
+    padding: 10px;
+  }
+
+  .unitBox {
+    display: inline-block;
+    width: 50px;
+    padding: 10px;
+    text-align: center;
+    background-color: lightgrey;
+    border: 1px solid lightgrey;
+  }
 `;
 const SWrapper = styled.div`
   display: inline-block;
-  width: 300px;
-  margin-bottom: 1rem;
+  width: 400px;
 `;
 
 const SelectWrapper = styled.div`
   display: inline-block;
-  width: 300px;
+  width: 400px;
   border: 1px solid lightgrey;
   padding: 10px;
-  margin-bottom: 1rem;
 `;
 const TitleWrapper = styled.div`
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   width: 100px;
+  height: 43px;
   text-align: right;
-  margin-right: 20px;
+  margin: 0 20px 0 0;
 `;

@@ -34,7 +34,7 @@ const stateOption = [
 ];
 
 const keyList = [
-  { title: "Category No" },
+  { title: "No" },
   { title: "Category" },
   { title: "상태", convertInt: ["숨김", "공개"] },
   { title: "Display순서" },
@@ -153,13 +153,8 @@ const ManageCategory = () => {
         </Col>
       </Row>
       <Row>
-        <Col>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setToggleRegister(true);
-            }}
-          >
+        <Col style={{ paddingBottom: "30px" }}>
+          <Button variant="secondary" onClick={() => setToggleRegister(true)}>
             신규 등록
           </Button>
         </Col>

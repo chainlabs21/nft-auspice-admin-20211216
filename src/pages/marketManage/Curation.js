@@ -104,7 +104,7 @@ const Curation = () => {
             }}
           >
             <RowWrapper>
-              <Col>
+              <Col lg={6} style={{ textAlign: "start" }}>
                 <div
                   style={{
                     fontSize: "1.2rem",
@@ -209,5 +209,5 @@ const SelectWrapper = styled.div`
   display: inline-block;
   margin-top: 10px;
   margin-left: 10px;
-  width: 250px;
+  width: 400px;
 `;

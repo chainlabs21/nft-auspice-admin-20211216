@@ -92,7 +92,7 @@ const MintingInspection = () => {
         </Col>
       </Row>
       <Row>
-        <Col lg={6} style={{ marginBottom: "5rem" }}>
+        <Col>
           <Card>
             <Card.Body>
               <Table bordered style={{ textAlign: "center" }}>
@@ -124,6 +124,7 @@ const MintingInspection = () => {
       <Row>
         <Col>
           <FunctionalTable
+            wrapName="mintingInspectionList"
             keyList={keyList}
             tableData={tableData}
             search
