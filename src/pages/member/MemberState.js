@@ -6,6 +6,7 @@ import { JsonToTableData } from "../../utils/tableUtils";
 import { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import PageTitle from "../../components/PageTitle";
+import styled from "styled-components";
 
 const keyList = [
   {
@@ -67,4 +68,5 @@ const MemberState = () => {
     </>
   );
 };
+
 export default MemberState;

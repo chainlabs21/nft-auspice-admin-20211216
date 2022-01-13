@@ -4,8 +4,8 @@ import { Row } from "react-bootstrap";
 export const CategorySelector = styled.div`
   padding: 10px 50px 10px 50px;
   border-radius: 5px 5px 0px 0px;
-  font-size: 1.1rem;
-  border: 1px solid lightgrey;
+  font-size: 14px;
+
   text-align: center;
   color: black;
 `;
@@ -19,13 +19,17 @@ export const MainCategorySelector = styled.div`
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
   color: black;
 `;
+
 export const CategoryRowWrapper = styled(Row)`
-  margin-left: 0.5rem;
+  width: 100%;
+  height: 43px;
+  margin: 0 0.5rem;
+  border: 1px solid lightgrey;
+
   .selected-category {
     background-color: lightgrey;
   }
   .selected-sub-category {
-    background-color: lightgrey;
   }
 `;
 export const CategoryMainRowWrapper = styled(Row)`
@@ -44,6 +48,8 @@ export const DropdownWrapper = styled.span`
   }
 `;
 export const InputGroupWrapper = styled.span`
+  
+
   input {
     border: 1px solid lightgrey;
   }
@@ -67,6 +73,9 @@ export const FormWrapper = styled.span`
 `;
 export const ButtonWrapper = styled.span`
   button {
+    width: 43px;
+    height: 100%;
+    padding: 0;
     background-color: white;
     border-color: lightgrey;
     color: grey;
@@ -79,8 +88,7 @@ export const ExcelWrapper = styled.span`
     color: grey;
     box-shadow: none;
     border: 1px solid lightgrey;
-    padding: 10px 19px 10px 19px;
-    width: 90px;
+    width: 68px;
     height: 43px;
   }
 `;

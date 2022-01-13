@@ -3504,18 +3504,21 @@ body.box-layout {
 // ==================================================================
 
 .form-control {
-    border: none;
-    border-bottom: 1px solid #ced4da;
-    background: no-repeat center bottom, center calc(100% - 1px);
-    background-size: 0 100%, 100% 100%;
-    transition: background 0s ease-out;
+    // border: none;
+    // border-bottom: 1px solid #ced4da;
+    // background: no-repeat center bottom, center calc(100% - 1px);
+    // background-size: 0 100%, 100% 100%;
+    // transition: background 0s ease-out;
+    padding-right: 10px;
+    padding-left: 10px;
 
     &:focus {
-        border-bottom-color: transparent;
-        background-size: 100% 100%, 100% 100%;
-        transition-duration: 0.3s;
-        box-shadow: none;
-        background-image: linear-gradient(to top, theme-color('primary') 2px, rgba(70, 128, 255, 0) 2px), linear-gradient(to top, #ced4da 1px, rgba(206, 212, 218, 0) 1px);
+        border-color: $primary-color;
+        // border-bottom-color: transparent;
+        // background-size: 100% 100%, 100% 100%;
+        // transition-duration: 0.3s;
+        // box-shadow: none;
+        // background-image: linear-gradient(to top, theme-color('primary') 2px, rgba(70, 128, 255, 0) 2px), linear-gradient(to top, #ced4da 1px, rgba(206, 212, 218, 0) 1px);
     }
 }
 

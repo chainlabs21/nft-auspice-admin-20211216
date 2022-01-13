@@ -272,7 +272,7 @@ const FunctionalTable = ({
                       <DropdownButton
                         style={{ marginRight: "1rem" }}
                         variant="secondary"
-                        className="dropdown-btn"
+                        className="dropdown-btn searchCategoryBtn"
                         as={InputGroup.Prepend}
                         title={searchCategory}
                       >
@@ -298,9 +298,7 @@ const FunctionalTable = ({
                         variant="secondary"
                         aria-describedby="basic-addon1"
                         placeholder={searchValue}
-                        onChange={(e) => {
-                          setSearchValue(e.target.value);
-                        }}
+                        onChange={(e) => setSearchValue(e.target.value)}
                       />
                     </FormWrapper>
                     <InputGroup.Append>
@@ -310,7 +308,9 @@ const FunctionalTable = ({
                     </InputGroup.Append>
                   </InputGroup>
                 </FuncWrapper>
-                <FuncWrapper className={datePicker ? "" : "d-none"}>
+                <FuncWrapper
+                  className={datePicker ? "dateBox" : "dateBox d-none"}
+                >
                   <span>
                     <FaRegCalendarAlt
                       style={{
@@ -324,9 +324,7 @@ const FunctionalTable = ({
                       timeFormat={false}
                       closeOnClickOutside
                       inputProps={{ placeholder: "From" }}
-                      onChange={(e) => {
-                        setFromDate(e);
-                      }}
+                      onChange={(e) => setFromDate(e)}
                     />
                   </FuncWrapper>
                   <span
@@ -377,6 +375,7 @@ const FunctionalTable = ({
                               <DropdownButton
                                 title={filterArr[i].title}
                                 variant="secondary"
+                                className="searchCategoryBtn"
                               >
                                 {filterArr[i].convertInt.map((label, j) => (
                                   <Dropdown.Item
@@ -404,6 +403,7 @@ const FunctionalTable = ({
                     ) : null}
                     <DropdownButton
                       title={showCount}
+                      className="numFilterBtn"
                       variant="secondary"
                       style={{ marginLeft: "1rem", marginRight: "0.5rem" }}
                     >
@@ -422,7 +422,11 @@ const FunctionalTable = ({
                     </DropdownButton>
                     <RightWrapper className={refresh ? "" : "d-none"}>
                       <ButtonWrapper style={{ marginRight: "0.5rem" }}>
-                        <Button variant="secondary" onClick={handleRefresh}>
+                        <Button
+                          className="reBtn"
+                          variant="secondary"
+                          onClick={handleRefresh}
+                        >
                           <FiRefreshCcw style={{ fontSize: "18px" }} />
                         </Button>
                       </ButtonWrapper>
@@ -565,7 +569,7 @@ const FunctionalTable = ({
 };
 
 const FuncWrapper = styled.div`
-  display: inline-block;
+  display: inline-flex;
   input {
     max-width: 200px;
   }
@@ -573,6 +577,32 @@ const FuncWrapper = styled.div`
 const RightIcons = styled.div`
   display: inline-block;
   float: right;
+
+  .numFilterBtn {
+    width: 68px;
+
+    .dropdown-toggle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: inherit;
+      height: 100%;
+      padding: 0;
+      line-height: 14px;
+    }
+
+    .dropdown-menu {
+      width: inherit;
+      min-width: unset;
+
+      button {
+        width: 100%;
+        height: 28px;
+        padding: 0 0 0 18px;
+        margin: 0;
+      }
+    }
+  }
 `;
 const RightWrapper = styled.div`
   display: inline-block;

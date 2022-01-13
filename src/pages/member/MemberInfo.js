@@ -29,7 +29,7 @@ const MemberInfo = () => {
   }, [dispatch]);
 
   return (
-    <Container fluid>
+    <Container fluid className="userDetail">
       <Row>
         <Col>
           <PageTitle title={"회원 상세"} />
@@ -58,47 +58,52 @@ const MemberInfo = () => {
           </Col>
         ))}
       </CategoryMainRowWrapper>
-      <CategoryRowWrapper className={curCategory === 0 ? "" : "d-none"}>
-        {mainCategory[0].subCategory.map((cate, i) => (
-          <CategorySelector
-            className={
-              curSubCategory === i
-                ? "selected-sub-category"
-                : "default-sub-category"
-            }
-            onClick={() => {
-              setCurSubCategory(i);
-            }}
-          >
-            {cate.title}
-          </CategorySelector>
-        ))}
-      </CategoryRowWrapper>
-      <RowWrapper className="info-table">
-        {curCategory === 0 ? (
-          <Col>
-            <FunctionalTable
-              datePicker
-              refresh
-              excel
-              keyList={mainCategory[0].subCategory[curSubCategory].keyList}
-              tableData={
-                Mockups[curCategory].subMokups[curSubCategory].tableData
+
+      <div className="contBox">
+        <CategoryRowWrapper
+          className={curCategory === 0 ? "categoryBar" : "categoryBar d-none"}
+        >
+          {mainCategory[0].subCategory.map((cate, i) => (
+            <CategorySelector
+              className={
+                curSubCategory === i
+                  ? "selected-sub-category"
+                  : "default-sub-category"
               }
-            />
-          </Col>
-        ) : (
-          <Col>
-            <FunctionalTable
-              datePicker
-              excel
-              refresh
-              keyList={mainCategory[curCategory].keyList}
-              tableData={Mockups[curCategory].tableData}
-            />
-          </Col>
-        )}
-      </RowWrapper>
+              onClick={() => {
+                setCurSubCategory(i);
+              }}
+            >
+              {cate.title}
+            </CategorySelector>
+          ))}
+        </CategoryRowWrapper>
+        <RowWrapper className="info-table">
+          {curCategory === 0 ? (
+            <Col>
+              <FunctionalTable
+                datePicker
+                refresh
+                excel
+                keyList={mainCategory[0].subCategory[curSubCategory].keyList}
+                tableData={
+                  Mockups[curCategory].subMokups[curSubCategory].tableData
+                }
+              />
+            </Col>
+          ) : (
+            <Col>
+              <FunctionalTable
+                datePicker
+                excel
+                refresh
+                keyList={mainCategory[curCategory].keyList}
+                tableData={Mockups[curCategory].tableData}
+              />
+            </Col>
+          )}
+        </RowWrapper>
+      </div>
     </Container>
   );
 };
