@@ -23,6 +23,7 @@ import {
 } from "../../store/marketReducer";
 import { useDispatch } from "react-redux";
 import { DropdownWrapper } from "../../stlye/globalStyles";
+import I_dnPolygonGray from "../../assets/images/I_dnPolygonGray.svg";
 import Select from "react-select";
 
 const stateOption = [
@@ -161,69 +162,78 @@ const ManageCategory = () => {
       </Row>
       <Row>
         <Col>
-          <FunctionalTable keyList={keyList} tableData={tableData} clean />
+          <FunctionalTable
+            wrapName="tableHasNo"
+            keyList={keyList}
+            tableData={tableData}
+            clean
+          />
         </Col>
       </Row>
-      <Modal show={toggleRegister} centered>
+      <Modal className="inpuListPopup" show={toggleRegister} centered>
         <Modal.Header>카테고리 등록</Modal.Header>
         <Modal.Body>
           <Container>
-            <Row>
+            <Row className="inputBox">
               <Col>
-                <div>
-                  <TitleWrapper>상태 :</TitleWrapper>
+                <ul className="inputList">
+                  <li>
+                    <div className="key">상태 :</div>
 
-                  <SelectWrapper>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={stateOption[0]}
-                      name="color"
-                      options={stateOption}
-                      onChange={(e) => {
-                        setCurState(e.value);
-                      }}
-                    />
-                  </SelectWrapper>
-                  <div>
-                    <TitleWrapper>카테고리 이름 :</TitleWrapper>
+                    <div className="value">
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={stateOption[0]}
+                        name="color"
+                        options={stateOption}
+                        onChange={(e) => setCurState(e.value)}
+                      />
+                    </div>
+                  </li>
 
-                    <SelectWrapper>
+                  <li>
+                    <div className="key">카테고리 이름 :</div>
+
+                    <div className="value">
                       <Form.Control
-                        onChange={(e) => {
-                          setCategoryName(e.target.value);
-                        }}
+                        onChange={(e) => setCategoryName(e.target.value)}
                         value={categoryName}
                       ></Form.Control>
-                    </SelectWrapper>
-                  </div>
-                </div>
+                    </div>
+                  </li>
+                </ul>
               </Col>
             </Row>
-            <Row>
-              <Col>
-                <div style={{ textAlign: "center" }}>
-                  <ButtonWrapper
-                    onClick={() => {
-                      setCategoryName("");
-                      setToggleRegister(false);
-                    }}
-                    variant="outline-secondary"
-                  >
-                    취소
-                  </ButtonWrapper>
-                  <ButtonWrapper onClick={submitRegister} variant="secondary">
-                    확인
-                  </ButtonWrapper>
-                </div>
-              </Col>
+            <Row className="actionBtnBox">
+              <button
+                className="whiteBtn"
+                onClick={() => {
+                  setCategoryName("");
+                  setToggleRegister(false);
+                }}
+                variant="outline-secondary"
+              >
+                취소
+              </button>
+              <button
+                className="grayBtn"
+                onClick={submitRegister}
+                variant="secondary"
+              >
+                확인
+              </button>
             </Row>
           </Container>
         </Modal.Body>
       </Modal>
-      <Modal centered show={toggleSetting} className="setting-modal">
+      <Modal
+        centered
+        show={toggleSetting}
+        className="categoryPopup setting-modal"
+      >
         <Modal.Body>
-          <Container style={{ textAlign: "center" }}>
+          <Container>
             <Row
               style={{
                 marginBottom: "2rem",
@@ -236,90 +246,88 @@ const ManageCategory = () => {
                 <header>카테고리 설정</header>
               </Col>
             </Row>
-            <RowWrapper>
-              <TitleWrapper style={{ textAlign: "right" }}>
-                <Form.Label>상태 :</Form.Label>
-              </TitleWrapper>
-              <SelectWrapper style={{ textAlign: "left" }}>
-                <DropdownWrapper>
-                  <DropdownButton
-                    title={
-                      categoryList[dataIndex].state === 1 ? "show" : "hide"
-                    }
-                  >
-                    <Dropdown.Item
-                      onClick={() => {
-                        setVisible(false);
-                      }}
-                    >
-                      hide
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      onClick={() => {
-                        setVisible(true);
-                      }}
-                    >
-                      show
-                    </Dropdown.Item>
-                  </DropdownButton>
-                </DropdownWrapper>
-              </SelectWrapper>
-            </RowWrapper>
 
-            <RowWrapper>
-              <TitleWrapper>
-                <Form.Label>카테고리명 :</Form.Label>
-              </TitleWrapper>
-              <SelectWrapper>
-                <Form.Control
-                  onChange={(e) => setCategoryName(e.target.value)}
-                  value={categoryList[dataIndex].name}
-                  type="text"
-                />
-              </SelectWrapper>
-            </RowWrapper>
-            <RowWrapper>
-              <TitleWrapper>
-                <Form.Label>카테고리 순서 :</Form.Label>
-              </TitleWrapper>
-              <SelectWrapper>
-                <OrderWrapper>
-                  <CategoryOrder>
-                    <ListGroup as="ul">
-                      {sortedCategory.map((v, i) => {
-                        return (
-                          <ListGroup.Item
-                            key={i}
-                            as="li"
-                            active={active === i ? true : false}
-                          >
-                            {v.name}
-                          </ListGroup.Item>
-                        );
-                      })}
-                    </ListGroup>
-                  </CategoryOrder>
-                  <CategoryOrder>
-                    <ArrowIconWrapper>
-                      <BsFileArrowUpFill
+            <ul className="settingList">
+              <li>
+                <div className="key">
+                  <Form.Label>상태 :</Form.Label>
+                </div>
+                <div className="value">
+                  <DropdownWrapper>
+                    <DropdownButton
+                      title={
+                        categoryList[dataIndex].state === 1 ? "show" : "hide"
+                      }
+                    >
+                      <Dropdown.Item
                         onClick={() => {
-                          changeDisplayOrder(dataIndex, 1);
+                          setVisible(false);
                         }}
-                      />
-                    </ArrowIconWrapper>
-                    <ArrowIconWrapper>
-                      <BsFileArrowDownFill
+                      >
+                        hide
+                      </Dropdown.Item>
+                      <Dropdown.Item
                         onClick={() => {
-                          changeDisplayOrder(dataIndex, 0);
+                          setVisible(true);
                         }}
-                      />
-                    </ArrowIconWrapper>
-                  </CategoryOrder>
-                </OrderWrapper>
-              </SelectWrapper>
-            </RowWrapper>
-            <RowWrapper>
-              <ButtonWrapper
+                      >
+                        show
+                      </Dropdown.Item>
+                    </DropdownButton>
+                  </DropdownWrapper>
+                </div>
+              </li>
+
+              <li>
+                <div className="key">
+                  <Form.Label>카테고리명 :</Form.Label>
+                </div>
+                <div className="value">
+                  <Form.Control
+                    onChange={(e) => setCategoryName(e.target.value)}
+                    value={categoryList[dataIndex].name}
+                    type="text"
+                  />
+                </div>
+              </li>
+              <li>
+                <div className="key">
+                  <Form.Label>카테고리 순서 :</Form.Label>
+                </div>
+                <div className="value orderValue">
+                  <ListGroup className="categoryList" as="ul">
+                    {sortedCategory.map((v, i) => {
+                      return (
+                        <ListGroup.Item
+                          key={i}
+                          as="li"
+                          active={active === i ? true : false}
+                        >
+                          {v.name}
+                        </ListGroup.Item>
+                      );
+                    })}
+                  </ListGroup>
+                  <div className="orderBtnBox">
+                    <button
+                      className="upBtn"
+                      onClick={() => changeDisplayOrder(dataIndex, 1)}
+                    >
+                      <img src={I_dnPolygonGray} alt="" />
+                    </button>
+                    <button
+                      className="dnBtn"
+                      onClick={() => changeDisplayOrder(dataIndex, 0)}
+                    >
+                      <img src={I_dnPolygonGray} alt="" />
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div className="actionBtnBox">
+              <button
+                className="whiteBtn"
                 variant="secondary"
                 onClick={() => {
                   setToggleSettings(false);
@@ -328,38 +336,24 @@ const ManageCategory = () => {
                 }}
               >
                 취소
-              </ButtonWrapper>
-              <ButtonWrapper variant="secondary" onClick={submitSettings}>
+              </button>
+              <button
+                className="grayBtn"
+                variant="secondary"
+                onClick={submitSettings}
+              >
                 확인
-              </ButtonWrapper>
-            </RowWrapper>
+              </button>
+            </div>
           </Container>
         </Modal.Body>
       </Modal>
     </Container>
   );
 };
-const ArrowIconWrapper = styled.div`
-  margin-left: 1rem;
-  font-size: 28px;
-`;
-const OrderWrapper = styled.div`
-  margin-top: 1rem;
-  vertical-align: middle;
-  display: flex;
-  align-items: flex-end;
-`;
 
-const CategoryOrder = styled.div`
-  display: inline-block;
-`;
 export default ManageCategory;
-const TitleWrapper = styled.div`
-  display: inline-block;
-  width: 100px;
-  text-align: right;
-  margin-right: 20px;
-`;
+const TitleWrapper = styled.div``;
 const SelectWrapper = styled.div`
   display: inline-block;
   width: 200px;
@@ -369,7 +363,4 @@ const ButtonWrapper = styled(Button)`
   margin-right: 15px;
   margin-top: 2rem;
   margin-bottom: 15px;
-`;
-const RowWrapper = styled.div`
-  margin-top: 1rem;
 `;

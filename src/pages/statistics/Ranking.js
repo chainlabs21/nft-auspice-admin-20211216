@@ -53,36 +53,38 @@ const Ranking = () => {
     setTableData(jsonData);
   }, [rankingList]);
   return (
-    <Container fluid>
+    <Container fluid className="ranking">
       <Row>
         <Col>
           <PageTitle title={"랭킹"} />
         </Col>
       </Row>
-      <CategoryRowWrapper>
-        <CategorySelector
-          stlye={{ fontSize: "0.9rem" }}
-          className={
-            curCategory === 0 ? "selected-category" : "dafault-category"
-          }
-          onClick={() => {
-            setCurCategory(0);
-          }}
-        >
-          All
-        </CategorySelector>
-        {createCategory()}
-      </CategoryRowWrapper>
-      <Row>
-        <Col>
-          <FunctionalTable
-            keyList={keyList}
-            tableData={tableData}
-            refresh
-            excel
-          />
-        </Col>
-      </Row>
+      <div className="contBox">
+        <CategoryRowWrapper className="customCategoryBar">
+          <CategorySelector
+            stlye={{ fontSize: "0.9rem" }}
+            className={
+              curCategory === 0 ? "selected-sub-category" : "dafault-category"
+            }
+            onClick={() => {
+              setCurCategory(0);
+            }}
+          >
+            All
+          </CategorySelector>
+          {createCategory()}
+        </CategoryRowWrapper>
+        <Row className="info-table">
+          <Col>
+            <FunctionalTable
+              keyList={keyList}
+              tableData={tableData}
+              refresh
+              excel
+            />
+          </Col>
+        </Row>
+      </div>
     </Container>
   );
 };

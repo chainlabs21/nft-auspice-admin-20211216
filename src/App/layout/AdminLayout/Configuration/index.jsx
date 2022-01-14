@@ -4,7 +4,8 @@ import { Button, Container, Row, Col, Modal } from "react-bootstrap";
 import DEMO from "../../../../store/constant";
 import { useSelector } from "../../../../store/reducer";
 import styled from "styled-components";
-import { BsFillFilePersonFill } from "react-icons/bs";
+import { BsFillFilePersonFill, BsPersonPlus } from "react-icons/bs";
+import { IoPersonCircleSharp } from "react-icons/io5";
 import gameItem from "../../../../assets/images/item.png";
 
 const Configuration = () => {
@@ -28,109 +29,80 @@ const Configuration = () => {
                 href={"/#/member/info"}
                 onClick={() => setConfigOpen(!configOpen)}
               >
-                *
+                <BsPersonPlus size="40" />
               </a>
             </div>
             <div className="style-block">
               <Container>
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "10px",
-                    right: "20px",
-                  }}
-                >
-                  <Button style={{ height: "40px" }}>Listed</Button>
-                </div>
-                <Row>
-                  <Col
-                    style={{
-                      borderBottom: "1px solid green",
-                      marginBottom: "1rem",
-                      padding: "1rem",
-                      textAlign: "center",
-                    }}
-                  >
+                <Row className="topBar">
+                  <Col>
                     <div>
-                      <BsFillFilePersonFill style={{ fontSize: "48px" }} />
+                      <IoPersonCircleSharp style={{ fontSize: "48px" }} />
                       <span style={{ marginLeft: "1rem" }}>
                         {currentUser.email}
                       </span>
                     </div>
+
+                    <button className="listBtn">Listed</button>
                   </Col>
                 </Row>
-                <Row style={{ marginBottom: "2rem" }}>
-                  <Col>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>가입일 :</LabelWrapper>
-                        <ValueWrapper>{currentUser.createdAt}</ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>Address :</LabelWrapper>
-                        <ValueWrapper>{currentUser.address}</ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>닉네임 :</LabelWrapper>{" "}
-                        <ValueWrapper>{currentUser.nickname}</ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>로열티 :</LabelWrapper>
-                        <ValueWrapper>{currentUser.royal}</ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>레퍼럴 :</LabelWrapper>
-                        <ValueWrapper>{currentUser.refer}</ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>Collections :</LabelWrapper>
-                        <ValueWrapper>{currentUser.collections}</ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>Items :</LabelWrapper>
-                        <ValueWrapper>{currentUser.items}</ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>Rferral Link :</LabelWrapper>
-                        <ValueWrapper>{currentUser.referLink}</ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>배경이미지 :</LabelWrapper>
-                        <ValueWrapper
-                          onClick={() => {
-                            setImageToggle(true);
-                          }}
-                        >
-                          background.png
-                        </ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                    <RowWrapper>
-                      <ColWrapper>
-                        <LabelWrapper>소개 :</LabelWrapper>
-                        <ValueWrapper>{currentUser.introduce}</ValueWrapper>
-                      </ColWrapper>
-                    </RowWrapper>
-                  </Col>
+                <Row className="infoListBox">
+                  <ul className="infoList">
+                    <li>
+                      <div className="key">가입일 :</div>
+                      <div className="value">{currentUser.createdAt}</div>
+                    </li>
+                    <li>
+                      <div className="key">Address :</div>
+                      <div className="value">{currentUser.address}</div>
+                    </li>
+                    <li>
+                      <div className="key">닉네임 :</div>{" "}
+                      <div className="value">{currentUser.nickname}</div>
+                    </li>
+                    <li>
+                      <div className="key">로열티 :</div>
+                      <div className="value percentBox">
+                        <span className="valueNum">{currentUser.royal}</span>
+                        <span className="unit">판매금액의%</span>
+                      </div>
+                    </li>
+                    <li>
+                      <div className="key">레퍼럴 :</div>
+                      <div className="value percentBox">
+                        <span className="valueNum">{currentUser.refer}</span>
+                        <span className="unit">판매금액의%</span>
+                      </div>
+                    </li>
+                    <li>
+                      <div className="key">Collections :</div>
+                      <div className="value">{currentUser.collections}</div>
+                    </li>
+                    <li>
+                      <div className="key">Items :</div>
+                      <div className="value">{currentUser.items}</div>
+                    </li>
+                    <li>
+                      <div className="key">Rferral Link :</div>
+                      <div className="value">{currentUser.referLink}</div>
+                    </li>
+                    <li>
+                      <div className="key">배경이미지 :</div>
+                      <div
+                        className="value"
+                        onClick={() => setImageToggle(true)}
+                      >
+                        background.png
+                      </div>
+                    </li>
+                    <li>
+                      <div className="key">소개 :</div>
+                      <div className="value">{currentUser.introduce}</div>
+                    </li>
+                  </ul>
                 </Row>
               </Container>
-              <Modal show={imageToggle} centered>
+              <Modal className="imgPopup" show={imageToggle} centered>
                 <Modal.Header>
                   <Modal.Title>배경이미지</Modal.Title>
                 </Modal.Header>
@@ -138,23 +110,24 @@ const Configuration = () => {
                   <Container style={{ textAlign: "center" }}>
                     <Row>
                       <Col style={{ marginBottom: "2rem" }}>
-                        <img
-                          style={{ width: "300px", height: "300px" }}
-                          src={gameItem}
-                          alt="background"
-                        />
+                        <span className="imgBox">
+                          <img src={gameItem} alt="background" />
+                        </span>
                       </Col>
                     </Row>
                     <Row>
                       <Col>
-                        <Button
-                          variant="secondary"
-                          onClick={() => {
-                            setImageToggle(false);
-                          }}
-                        >
-                          확인
-                        </Button>
+                        <div className="actionBtnBox">
+                          <Button
+                            className="grayBtn"
+                            variant="secondary"
+                            onClick={() => {
+                              setImageToggle(false);
+                            }}
+                          >
+                            확인
+                          </Button>
+                        </div>
                       </Col>
                     </Row>
                   </Container>

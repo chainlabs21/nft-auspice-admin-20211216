@@ -61,7 +61,9 @@ const MemberInfo = () => {
 
       <div className="contBox">
         <CategoryRowWrapper
-          className={curCategory === 0 ? "categoryBar" : "categoryBar d-none"}
+          className={
+            curCategory === 0 ? "customCategoryBar" : "customCategoryBar d-none"
+          }
         >
           {mainCategory[0].subCategory.map((cate, i) => (
             <CategorySelector
@@ -82,6 +84,7 @@ const MemberInfo = () => {
           {curCategory === 0 ? (
             <Col>
               <FunctionalTable
+                wrapName="tableHasNo"
                 datePicker
                 refresh
                 excel
@@ -94,6 +97,9 @@ const MemberInfo = () => {
           ) : (
             <Col>
               <FunctionalTable
+                wrapName={`${curCategory !== 2 && "tableHasNo"} ${
+                  curCategory > 3 && "fixedPixel"
+                }`}
                 datePicker
                 excel
                 refresh

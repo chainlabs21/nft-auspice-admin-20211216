@@ -48,11 +48,13 @@
       border-top: 1px solid $theme-border;
     }
 
-    &:hover{
-        background: #F5F7FA;
+    &:hover {
+      background: #f5f7fa;
     }
   }
+}
 
+.table-nonBorderedInside {
   td,
   th {
     border: none;

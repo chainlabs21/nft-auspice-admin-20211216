@@ -104,21 +104,24 @@ const SettingManage = () => {
       </Row>
       <Row>
         <Col>
-          <Button
-            onClick={() => {
-              setToggleSetting(true);
-              setId("");
-              setPwd("");
-              setEmail("");
-              setPhone("");
-              setPrevId("");
-              setOpenState(0);
-            }}
-            variant="secondary"
-          >
-            신규 등록
-          </Button>
+          <Row style={{ padding: " 0 0 30px 15px" }}>
+            <Button
+              onClick={() => {
+                setToggleSetting(true);
+                setId("");
+                setPwd("");
+                setEmail("");
+                setPhone("");
+                setPrevId("");
+                setOpenState(0);
+              }}
+              variant="secondary"
+            >
+              신규 등록
+            </Button>
+          </Row>
           <FunctionalTable
+            wrapName="tableHasNo"
             keyList={keyList}
             tableData={tableData}
             refresh
@@ -126,77 +129,78 @@ const SettingManage = () => {
           />
         </Col>
       </Row>
-      <Modal show={toggleSetting} centered>
+      <Modal className="inpuListPopup" show={toggleSetting} centered>
         <Modal.Header>관리자 등록 / 수정</Modal.Header>
         <Modal.Body>
           <Container>
-            <Row>
+            <Row className="inputBox">
               <Col>
-                <div>
-                  <TitleWrapper>상태 :</TitleWrapper>
-                  <SelectWrapper>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={stateOption[openState]}
-                      name="color"
-                      options={stateOption}
-                      onChange={(e) => {
-                        setOpenState(e.value);
-                      }}
-                    />
-                  </SelectWrapper>
-                  <TitleWrapper>ID :</TitleWrapper>
-                  <SelectWrapper>
-                    <Form.Control
-                      onChange={(e) => {
-                        setId(e.target.value);
-                      }}
-                      value={id}
-                    ></Form.Control>
-                  </SelectWrapper>
-                  <TitleWrapper>PWD :</TitleWrapper>
-                  <SelectWrapper>
-                    <Form.Control
-                      onChange={(e) => {
-                        setPwd(e.target.value);
-                      }}
-                      value={pwd}
-                    ></Form.Control>
-                  </SelectWrapper>
-                  <TitleWrapper>E-mail :</TitleWrapper>
-                  <SelectWrapper>
-                    <Form.Control
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                      }}
-                      value={email}
-                    ></Form.Control>
-                  </SelectWrapper>
-                  <TitleWrapper>연락처 :</TitleWrapper>
-                  <SelectWrapper>
-                    <Form.Control
-                      onChange={(e) => {
-                        setPhone(e.target.value);
-                      }}
-                      value={phone}
-                    ></Form.Control>
-                  </SelectWrapper>
-                </div>
+                <ul className="inputList">
+                  <li>
+                    <div className="key">상태 :</div>
+                    <div className="value">
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={stateOption[openState]}
+                        name="color"
+                        options={stateOption}
+                        onChange={(e) => setOpenState(e.value)}
+                      />
+                    </div>
+                  </li>
+
+                  <li>
+                    <div className="key">ID :</div>
+                    <div className="value">
+                      <Form.Control
+                        onChange={(e) => setId(e.target.value)}
+                        value={id}
+                      ></Form.Control>
+                    </div>
+                  </li>
+
+                  <li>
+                    <div className="key">PWD :</div>
+                    <div className="value">
+                      <Form.Control
+                        onChange={(e) => setPwd(e.target.value)}
+                        value={pwd}
+                      ></Form.Control>
+                    </div>
+                  </li>
+
+                  <li>
+                    <div className="key">E-mail :</div>
+                    <div className="value">
+                      <Form.Control
+                        onChange={(e) => setEmail(e.target.value)}
+                        value={email}
+                      ></Form.Control>
+                    </div>
+                  </li>
+
+                  <li>
+                    <div className="key">연락처 :</div>
+
+                    <div className="value">
+                      <Form.Control
+                        onChange={(e) => setPhone(e.target.value)}
+                        value={phone}
+                      ></Form.Control>
+                    </div>
+                  </li>
+                </ul>
               </Col>
             </Row>
 
-            <Row>
-              <Col>
-                <div style={{ textAlign: "center" }}>
-                  <ButtonWrapper variant="danger" onClick={handleDelete}>
-                    삭제
-                  </ButtonWrapper>
-                  <ButtonWrapper variant="secondary" onClick={handleSubmit}>
-                    확인
-                  </ButtonWrapper>
-                </div>
-              </Col>
+            <Row className="actionBtnBox">
+              <button className="redBtn" variant="danger" onClick={handleDelete}>
+                삭제
+              </button>
+              <button className="grayBtn" variant="secondary" onClick={handleSubmit}>
+                확인
+              </button>
             </Row>
           </Container>
         </Modal.Body>

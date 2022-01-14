@@ -129,7 +129,7 @@ const SystemAccount = () => {
     setAccountTableData(accountTemp);
   }, [accountList]);
   return (
-    <Container fluid>
+    <Container fluid className="systemAccount">
       <Row>
         <Col>
           <PageTitle title={"시스템 계정"} margin={5} />
@@ -138,6 +138,7 @@ const SystemAccount = () => {
       <Row>
         <Col style={{ marginBottom: "5rem" }}>
           <FunctionalTable
+            wrapName="tableHasNo"
             clean
             tableData={accountTableData}
             keyList={accountKeyList}
@@ -146,27 +147,33 @@ const SystemAccount = () => {
       </Row>
       <Row>
         <Col>
-          <CategoryRowWrapper>
-            {categoryList.map((v, i) => {
-              return (
-                <CategorySelector
-                  onClick={() => {
-                    setCurCategory(i);
-                  }}
-                  className={
-                    curCategory === i ? "selected-category" : "default-category"
-                  }
-                >
-                  {v}
-                </CategorySelector>
-              );
-            })}
-          </CategoryRowWrapper>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <FunctionalTable clean tableData={tableData} keyList={keyList} />
+          <div className="contBox">
+            <CategoryRowWrapper className="customCategoryBar ">
+              {categoryList.map((v, i) => {
+                return (
+                  <CategorySelector
+                    onClick={() => {
+                      setCurCategory(i);
+                    }}
+                    className={
+                      curCategory === i
+                        ? "selected-category"
+                        : "default-category"
+                    }
+                  >
+                    {v}
+                  </CategorySelector>
+                );
+              })}
+            </CategoryRowWrapper>
+
+            <FunctionalTable
+              wrapName="info-table tableHasNo"
+              clean
+              tableData={tableData}
+              keyList={keyList}
+            />
+          </div>
         </Col>
       </Row>
       <SettingModal

@@ -26,13 +26,13 @@ const SettingModal = ({
   }, [show]);
 
   return (
-    <Modal centered show={toggle}>
+    <Modal className="inpuListPopup" centered show={toggle}>
       <Modal.Header>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Container>
-          <Row>
+          <Row className="inputBox">
             <Col>
               <InputGroup>
                 <FormControl
@@ -48,20 +48,17 @@ const SettingModal = ({
               </InputGroup>
             </Col>
           </Row>
-          <Row>
-            <Col style={{ textAlign: "center" }}>
-              <ButtonWrapper variant="secondary" onClick={onCancel}>
-                취소
-              </ButtonWrapper>
-              <ButtonWrapper
-                variant="secondary"
-                onClick={() => {
-                  onSubmit(value);
-                }}
-              >
-                확인
-              </ButtonWrapper>
-            </Col>
+          <Row className="actionBtnBox">
+            <button className="whiteBtn" variant="secondary" onClick={onCancel}>
+              취소
+            </button>
+            <button
+              className="grayBtn"
+              variant="secondary"
+              onClick={() => onSubmit(value)}
+            >
+              확인
+            </button>
           </Row>
         </Container>
       </Modal.Body>

@@ -127,9 +127,12 @@ const NoticeDetail = () => {
           <Card>
             <Card.Header>
               <RowWrapper>
-                <TitleWrapper>공지 유형 :</TitleWrapper>
+                <div className="key">
+                  <p>공지 유형 </p>
+                  <p>:</p>
+                </div>
 
-                <SelectWrapper>
+                <div className="value">
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
@@ -140,12 +143,15 @@ const NoticeDetail = () => {
                       setKind(e.value);
                     }}
                   />
-                </SelectWrapper>
+                </div>
               </RowWrapper>
               <RowWrapper>
-                <TitleWrapper>일반공지 공개여부 :</TitleWrapper>
+                <div className="key">
+                  <p>일반공지 공개여부 </p>
+                  <p>:</p>
+                </div>
 
-                <SelectWrapper>
+                <div className="value">
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
@@ -156,12 +162,15 @@ const NoticeDetail = () => {
                       setOpen(e.value);
                     }}
                   />
-                </SelectWrapper>
+                </div>
               </RowWrapper>
               <RowWrapper>
-                <TitleWrapper>팝업공지 공개여부 :</TitleWrapper>
+                <div className="key">
+                  <p>팝업공지 공개여부 </p>
+                  <p>:</p>
+                </div>
 
-                <SelectWrapper>
+                <div className="value">
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
@@ -172,12 +181,15 @@ const NoticeDetail = () => {
                       setPopupOpen(e.value);
                     }}
                   />
-                </SelectWrapper>
+                </div>
               </RowWrapper>
               <RowWrapper>
-                <TitleWrapper>언어 :</TitleWrapper>
+                <div className="key">
+                  <p>언어 </p>
+                  <p>:</p>
+                </div>
 
-                <SelectWrapper>
+                <div className="value">
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
@@ -188,12 +200,15 @@ const NoticeDetail = () => {
                       setLanguage(e.value);
                     }}
                   />
-                </SelectWrapper>
+                </div>
               </RowWrapper>
               <RowWrapper>
-                <TitleWrapper>공지 제목 :</TitleWrapper>
+                <div className="key">
+                  <p>공지 제목 </p>
+                  <p>:</p>
+                </div>
 
-                <SelectWrapper>
+                <div className="value">
                   <Form.Control
                     onChange={(e) => {
                       setTitle(e.target.value);
@@ -201,7 +216,7 @@ const NoticeDetail = () => {
                     value={title}
                     placeholder={title}
                   ></Form.Control>
-                </SelectWrapper>
+                </div>
               </RowWrapper>
             </Card.Header>
             <Card.Body>
@@ -221,12 +236,7 @@ const NoticeDetail = () => {
                       <ButtonWrapper variant="danger" onClick={handleDelete}>
                         삭제
                       </ButtonWrapper>
-                      <ButtonWrapper
-                        variant="outline-secondary"
-                        onClick={handleClose}
-                      >
-                        닫기
-                      </ButtonWrapper>
+
                       <ButtonWrapper variant="secondary" onClick={handleSubmit}>
                         확인
                       </ButtonWrapper>
@@ -242,19 +252,33 @@ const NoticeDetail = () => {
   );
 };
 export default NoticeDetail;
-const TitleWrapper = styled.div`
-  display: inline-block;
-  width: 300px;
-  text-align: right;
-  margin-right: 30px;
-`;
-const SelectWrapper = styled.div`
-  display: inline-block;
-  width: 500px;
-`;
+
 const ButtonWrapper = styled(Button)`
   margin-right: 30px;
 `;
 const RowWrapper = styled.div`
-  margin-top: 1rem;
+  display: flex;
+  gap: 30px;
+  margin: 16px 0 0 0;
+
+  .key {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 140px;
+    height: 38px;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .value {
+    flex: 1;
+    height: 38px;
+
+    input {
+      height: 100%;
+    }
+  }
 `;

@@ -80,79 +80,92 @@ const StatInfo = () => {
     }
   }, [curCategory, tradeData, feeData, royalData, refData]);
   return (
-    <Container fluid>
-      <Row>
-        <Col>
-          <PageTitle title={"통계 상세"} />
-        </Col>
-      </Row>
-      <Row>
-        <Col style={{ marginBottom: "5rem" }}>
-          <SubTitleWrapper>기간별 통계 요약</SubTitleWrapper>
-          <FunctionalTable
-            datePicker
-            refresh={false}
-            keyList={summaryKeyList}
-            tableData={summary}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <SubTitleWrapper>통계 상세 현황</SubTitleWrapper>
-        </Col>
-      </Row>
-      <CategoryRowWrapper>
-        <CategorySelector
-          className={
-            curCategory === 0 ? "selected-category" : "default-category"
-          }
-          onClick={() => {
-            setCurCategory(0);
-          }}
-        >
-          거래
-        </CategorySelector>
-        <CategorySelector
-          className={
-            curCategory === 1 ? "selected-category" : "default-category"
-          }
-          onClick={() => {
-            setCurCategory(1);
-          }}
-        >
-          수수료
-        </CategorySelector>
-        <CategorySelector
-          className={
-            curCategory === 2 ? "selected-category" : "default-category"
-          }
-          onClick={() => {
-            setCurCategory(2);
-          }}
-        >
-          로얄티
-        </CategorySelector>
-        <CategorySelector
-          className={
-            curCategory === 3 ? "selected-category" : "default-category"
-          }
-          onClick={() => {
-            setCurCategory(3);
-          }}
-        >
-          레퍼럴
-        </CategorySelector>
-      </CategoryRowWrapper>
+    <StatInfoBox className="statInfoBox">
+      <Container fluid>
+        <Row>
+          <Col>
+            <PageTitle title={"통계 상세"} />
+          </Col>
+        </Row>
+        <Row>
+          <Col style={{ marginBottom: "5rem" }}>
+            <SubTitleWrapper>기간별 통계 요약</SubTitleWrapper>
+            <FunctionalTable
+              datePicker
+              refresh={false}
+              keyList={summaryKeyList}
+              tableData={summary}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <SubTitleWrapper>통계 상세 현황</SubTitleWrapper>
+          </Col>
+        </Row>
 
-      <FunctionalTable
-        datePicker
-        excel
-        refresh
-        keyList={curKeyList}
-        tableData={curTableData}
-      />
-    </Container>
+        <Row className="totalDetailContainer">
+          <Col>
+            <div className="contBox">
+              <CategoryRowWrapper className="customCategoryBar ">
+                <CategorySelector
+                  className={
+                    curCategory === 0 ? "selected-category" : "default-category"
+                  }
+                  onClick={() => {
+                    setCurCategory(0);
+                  }}
+                >
+                  거래
+                </CategorySelector>
+                <CategorySelector
+                  className={
+                    curCategory === 1 ? "selected-category" : "default-category"
+                  }
+                  onClick={() => {
+                    setCurCategory(1);
+                  }}
+                >
+                  수수료
+                </CategorySelector>
+                <CategorySelector
+                  className={
+                    curCategory === 2 ? "selected-category" : "default-category"
+                  }
+                  onClick={() => {
+                    setCurCategory(2);
+                  }}
+                >
+                  로얄티
+                </CategorySelector>
+                <CategorySelector
+                  className={
+                    curCategory === 3 ? "selected-category" : "default-category"
+                  }
+                  onClick={() => {
+                    setCurCategory(3);
+                  }}
+                >
+                  레퍼럴
+                </CategorySelector>
+              </CategoryRowWrapper>
+
+              <FunctionalTable
+                wrapName="info-table tableHasNo"
+                datePicker
+                excel
+                refresh
+                keyList={curKeyList}
+                tableData={curTableData}
+              />
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </StatInfoBox>
   );
 };
+
+const StatInfoBox = styled.section``;
+
 export default StatInfo;

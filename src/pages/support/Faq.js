@@ -129,7 +129,7 @@ const Faq = () => {
         </Col>
       </Row>
       <Row>
-        <Col>
+        <Col style={{ padding: 0 }}>
           <ButtonWrapper
             onClick={() => setToggleCreate(true)}
             variant="secondary"
@@ -160,6 +160,7 @@ const Faq = () => {
       <Row>
         <Col>
           <FunctionalTable
+            wrapName="tableHasNo"
             keyList={keyList}
             tableData={tableData}
             datePicker
@@ -168,197 +169,208 @@ const Faq = () => {
           />
         </Col>
       </Row>
-      <Modal show={toggleCreate} centered>
+      <Modal className="inpuListPopup" show={toggleCreate} centered>
         <Modal.Header>카테고리 등록</Modal.Header>
         <Modal.Body>
           <Container>
-            <Row>
+            <Row className="inputBox">
               <Col>
-                <div>
-                  <TitleWrapper>공지 유형 :</TitleWrapper>
+                <ul className="inputList">
+                  <li>
+                    <div className="key">공지 유형 :</div>
 
-                  <SelectWrapper>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={createStateOption[0]}
-                      name="color"
-                      options={createStateOption}
-                      onChange={(e) => {
-                        setCategoryState(e.value);
-                      }}
-                    />
-                  </SelectWrapper>
-                  <div>
-                    <TitleWrapper>공지 제목 :</TitleWrapper>
+                    <div className="value">
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={createStateOption[0]}
+                        name="color"
+                        options={createStateOption}
+                        onChange={(e) => {
+                          setCategoryState(e.value);
+                        }}
+                      />
+                    </div>
+                  </li>
 
-                    <SelectWrapper>
+                  <li>
+                    <div className="key">공지 제목 :</div>
+
+                    <div className="value">
                       <Form.Control
                         onChange={(e) => {
                           setNewCategoryName(e.target.value);
                         }}
                         value={newCategoryName}
                       ></Form.Control>
-                    </SelectWrapper>
-                  </div>
-                </div>
+                    </div>
+                  </li>
+                </ul>
               </Col>
             </Row>
-            <Row>
-              <Col>
-                <div style={{ textAlign: "center" }}>
-                  <ButtonWrapper
-                    onClick={() => setToggleCreate(false)}
-                    variant="outline-secondary"
-                  >
-                    취소
-                  </ButtonWrapper>
-                  <ButtonWrapper onClick={handleCreate} variant="secondary">
-                    확인
-                  </ButtonWrapper>
-                </div>
-              </Col>
+            <Row className="actionBtnBox">
+              <button
+                className="whiteBtn"
+                onClick={() => setToggleCreate(false)}
+                variant="outline-secondary"
+              >
+                취소
+              </button>
+              <button
+                className="grayBtn"
+                onClick={handleCreate}
+                variant="secondary"
+              >
+                확인
+              </button>
             </Row>
           </Container>
         </Modal.Body>
       </Modal>
-      <Modal show={toggleSetting} centered>
+
+      <Modal className="inpuListPopup" show={toggleSetting} centered>
         <Modal.Header>카테고리 설정</Modal.Header>
         <Modal.Body>
           <Container>
-            <Row>
+            <Row className="inputBox">
               <Col>
-                <RowWrapper>
-                  <TitleWrapper>상태 :</TitleWrapper>
+                <ul className="inputList">
+                  <li>
+                    <div className="key">상태 :</div>
 
-                  <SelectWrapper>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={createStateOption[0]}
-                      name="color"
-                      options={createStateOption}
-                      onChange={(e) => {
-                        setCategoryState(e.value);
-                      }}
-                    />
-                  </SelectWrapper>
-                </RowWrapper>
-                <RowWrapper>
-                  <TitleWrapper>카테고리 :</TitleWrapper>
+                    <div className="value">
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={createStateOption[0]}
+                        name="color"
+                        options={createStateOption}
+                        onChange={(e) => {
+                          setCategoryState(e.value);
+                        }}
+                      />
+                    </div>
+                  </li>
+                  <li>
+                    <div className="key">카테고리 :</div>
 
-                  <SelectWrapper>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={settingOption[0]}
-                      name="color"
-                      options={settingOption}
-                      onChange={(e) => {
-                        setCategoryKind(e.value);
-                      }}
-                    />
-                  </SelectWrapper>
-                </RowWrapper>
-                <RowWrapper>
-                  <TitleWrapper>새 카테고리명 :</TitleWrapper>
+                    <div className="value">
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={settingOption[0]}
+                        name="color"
+                        options={settingOption}
+                        onChange={(e) => {
+                          setCategoryKind(e.value);
+                        }}
+                      />
+                    </div>
+                  </li>
+                  <li>
+                    <div className="key">새 카테고리명 :</div>
 
-                  <SelectWrapper>
-                    <Form.Control
-                      onChange={(e) => {
-                        setNewCategoryName(e.target.value);
-                      }}
-                      value={newCategoryName}
-                    ></Form.Control>
-                  </SelectWrapper>
-                </RowWrapper>
+                    <div className="value">
+                      <Form.Control
+                        onChange={(e) => {
+                          setNewCategoryName(e.target.value);
+                        }}
+                        value={newCategoryName}
+                      ></Form.Control>
+                    </div>
+                  </li>
+                </ul>
               </Col>
             </Row>
-            <Row>
-              <Col>
-                <div style={{ textAlign: "center" }}>
-                  <ButtonWrapper
-                    onClick={() => {
-                      setToggleSetting(false);
-                      setCategoryState(0);
-                      setCategoryKind(0);
-                      setNewCategoryName("");
-                    }}
-                    variant="outline-secondary"
-                  >
-                    취소
-                  </ButtonWrapper>
-                  <ButtonWrapper onClick={handleSetting} variant="secondary">
-                    확인
-                  </ButtonWrapper>
-                </div>
-              </Col>
+
+            <Row className="actionBtnBox">
+              <button
+                className="whiteBtn"
+                onClick={() => {
+                  setToggleSetting(false);
+                  setCategoryState(0);
+                  setCategoryKind(0);
+                  setNewCategoryName("");
+                }}
+                variant="outline-secondary"
+              >
+                취소
+              </button>
+              <button
+                className="grayBtn"
+                onClick={handleSetting}
+                variant="secondary"
+              >
+                확인
+              </button>
             </Row>
           </Container>
         </Modal.Body>
       </Modal>
-      <Modal show={toggleFaq} centered>
+
+      <Modal className="inpuListPopup" show={toggleFaq} centered>
         <Modal.Header>FAQ 신규 등록 및 수정</Modal.Header>
         <Modal.Body>
           <Container>
-            <Row>
+            <Row className="inputBox">
               <Col>
-                <RowWrapper>
-                  <TitleWrapper>상태 :</TitleWrapper>
+                <ul className="inputList">
+                  <li>
+                    <div className="key">상태 :</div>
 
-                  <SelectWrapper>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={createStateOption[0]}
-                      name="color"
-                      options={createStateOption}
-                      onChange={(e) => {
-                        setCategoryState(e.value);
-                      }}
-                    />
-                  </SelectWrapper>
-                </RowWrapper>
-                <RowWrapper>
-                  <TitleWrapper>카테고리 :</TitleWrapper>
+                    <div className="value">
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={createStateOption[0]}
+                        name="color"
+                        options={createStateOption}
+                        onChange={(e) => {
+                          setCategoryState(e.value);
+                        }}
+                      />
+                    </div>
+                  </li>
+                  <li>
+                    <div className="key">카테고리 :</div>
 
-                  <SelectWrapper>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={settingOption[0]}
-                      name="color"
-                      options={settingOption}
-                      onChange={(e) => {
-                        setCategoryKind(e.value);
-                      }}
-                    />
-                  </SelectWrapper>
-                </RowWrapper>
-                <RowWrapper>
-                  <TitleWrapper>제목 :</TitleWrapper>
+                    <div className="value">
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={settingOption[0]}
+                        name="color"
+                        options={settingOption}
+                        onChange={(e) => {
+                          setCategoryKind(e.value);
+                        }}
+                      />
+                    </div>
+                  </li>
+                  <li>
+                    <div className="key">제목 :</div>
 
-                  <SelectWrapper>
-                    <Form.Control
-                      onChange={(e) => {
-                        setFaqTitle(e.target.value);
-                      }}
-                      value={faqTitle}
-                    ></Form.Control>
-                  </SelectWrapper>
-                </RowWrapper>
-                <RowWrapper>
-                  <TitleWrapper>내용 :</TitleWrapper>
+                    <div className="value">
+                      <Form.Control
+                        onChange={(e) => {
+                          setFaqTitle(e.target.value);
+                        }}
+                        value={faqTitle}
+                      ></Form.Control>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="key">내용 :</div>
 
-                  <SelectWrapper>
-                    <Form.Control
-                      onChange={(e) => {
-                        setFaqBody(e.target.value);
-                      }}
-                      value={faqBody}
-                    ></Form.Control>
-                  </SelectWrapper>
-                </RowWrapper>
+                    <div className="value">
+                      <Form.Control
+                        as="textarea"
+                        onChange={(e) => setFaqBody(e.target.value)}
+                        value={faqBody}
+                      ></Form.Control>
+                    </div>
+                  </li>
+                </ul>
               </Col>
             </Row>
             <Row>

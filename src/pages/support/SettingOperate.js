@@ -95,47 +95,53 @@ const SettingOperate = () => {
                   </thead>
                   <tbody>
                     <td>{applyPercent}</td>
-                    <td
-                      onClick={() => {
-                        setRoyalRangeToggle(true);
-                      }}
-                    >
-                      {royalRange}
+                    <td className="setBtnBox">
+                      <button
+                        className="setBtn"
+                        onClick={() => setRoyalRangeToggle(true)}
+                      >
+                        {royalRange}
+                      </button>
                     </td>
-                    <td
-                      onClick={() => {
-                        setRoyalStandardToggle(true);
-                      }}
-                    >
-                      {royalStandard}
+                    <td className="setBtnBox">
+                      <button
+                        className="setBtn"
+                        onClick={() => setRoyalStandardToggle(true)}
+                      >
+                        {royalStandard}
+                      </button>
                     </td>
-                    <td
-                      onClick={() => {
-                        setRoyalTermToggle(true);
-                      }}
-                    >
-                      {royalTerm}
+                    <td  className="setBtnBox">
+                      <button
+                        className="setBtn"
+                        onClick={() => setRoyalTermToggle(true)}
+                      >
+                        {royalTerm}
+                      </button>
                     </td>
-                    <td
-                      onClick={() => {
-                        setReferPriceToggle(true);
-                      }}
-                    >
-                      {referPrice}
+                    <td  className="setBtnBox">
+                      <button
+                        className="setBtn"
+                        onClick={() => setReferPriceToggle(true)}
+                      >
+                        {referPrice}
+                      </button>
                     </td>
-                    <td
-                      onClick={() => {
-                        setReferStandardToggle(true);
-                      }}
-                    >
-                      {referStandard}
+                    <td  className="setBtnBox">
+                      <button
+                        className="setBtn"
+                        onClick={() => setReferStandardToggle(true)}
+                      >
+                        {referStandard}
+                      </button>
                     </td>
-                    <td
-                      onClick={() => {
-                        setReferStandardToggle(true);
-                      }}
-                    >
-                      {referTerm}
+                    <td  className="setBtnBox">
+                      <button
+                        className="setBtn"
+                        onClick={() => setReferStandardToggle(true)}
+                      >
+                        {referTerm}
+                      </button>
                     </td>
                   </tbody>
                 </Table>

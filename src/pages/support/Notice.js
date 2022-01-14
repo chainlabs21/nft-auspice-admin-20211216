@@ -66,10 +66,13 @@ const Notice = () => {
       </Row>
       <Row>
         <Col>
-          <Button variant="secondary" onClick={handleCreate}>
-            신규 등록
-          </Button>
+          <Row style={{ padding: " 0 0 30px 15px" }}>
+            <Button variant="secondary" onClick={handleCreate}>
+              신규 등록
+            </Button>
+          </Row>
           <FunctionalTable
+            wrapName="tableHasNo"
             keyList={keyList}
             tableData={tableData}
             datePicker

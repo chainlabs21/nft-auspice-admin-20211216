@@ -24,14 +24,6 @@ export const MainCategorySelector = styled.div`
 export const CategoryRowWrapper = styled(Row)`
   width: 100%;
   height: 43px;
-  margin: 0 0.5rem;
-  border: 1px solid lightgrey;
-
-  .selected-category {
-    background-color: lightgrey;
-  }
-  .selected-sub-category {
-  }
 `;
 export const CategoryMainRowWrapper = styled(Row)`
   margin-bottom: 5rem;
@@ -94,7 +86,6 @@ export const ExcelWrapper = styled.span`
 export const SubTitleWrapper = styled.div`
   font-size: 1.2rem;
   margin-bottom: 2rem;
-  margin-left: 1.5rem;
 `;
 export const TableWrapper = styled.div`
   table {

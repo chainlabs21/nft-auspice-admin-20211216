@@ -10,7 +10,7 @@ import styled from "styled-components";
 
 const keyList = [
   {
-    title: "회원No",
+    title: "no",
   },
   { title: "가입일", isDate: true },
   { title: "지갑주소", href: WALLET_QUERY_URL, search: true },
@@ -55,6 +55,7 @@ const MemberState = () => {
         <Row>
           <Col>
             <FunctionalTable
+              wrapName="tableHasNo"
               tableData={tableData}
               keyList={keyList}
               search

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Table } from "react-bootstrap";
+import { Card, Form, Table } from "react-bootstrap";
 import { SubTitleWrapper } from "../../stlye/globalStyles";
 const PushAlertTable = () => {
   const [sellItem, setSellItem] = useState(false);
@@ -16,7 +16,7 @@ const PushAlertTable = () => {
         <SubTitleWrapper>PUSH 알람 설정</SubTitleWrapper>
         <Table>
           <Table striped bordered hover>
-            <thead>
+            <thead style={{ textAlign: "center" }}>
               <th>내아이템판매</th>
               <th>내아이템입찰</th>
               <th>offer받을때</th>
@@ -27,69 +27,133 @@ const PushAlertTable = () => {
               <th>로얄티받았을때</th>
             </thead>
             <tbody>
-              <td
-                onClick={() => {
-                  //dispatch
-                  setSellItem(!sellItem);
-                }}
-              >
-                {sellItem ? <span>on</span> : <span>off</span>}
+              <td>
+                <Form.Group>
+                  <div className="switch d-inline m-r-10">
+                    <Form.Control
+                      type="checkbox"
+                      id="checked-sellItem"
+                      defaultChecked={sellItem}
+                      onChange={() => setSellItem(!sellItem)}
+                    />
+                    <Form.Label htmlFor="checked-sellItem" className="cr" />
+                  </div>
+                  <Form.Label>
+                    {sellItem ? <span>on</span> : <span>off</span>}
+                  </Form.Label>
+                </Form.Group>
               </td>
-              <td
-                onClick={() => {
-                  //dispatch
-                  setBidItem(!bidItem);
-                }}
-              >
-                {bidItem ? <span>on</span> : <span>off</span>}
+              <td>
+                <Form.Group>
+                  <div className="switch d-inline m-r-10">
+                    <Form.Control
+                      type="checkbox"
+                      id="checked-bidItem"
+                      defaultChecked={bidItem}
+                      onChange={() => setBidItem(!bidItem)}
+                    />
+                    <Form.Label htmlFor="checked-bidItem" className="cr" />
+                  </div>
+                  <Form.Label>
+                    {bidItem ? <span>on</span> : <span>off</span>}
+                  </Form.Label>
+                </Form.Group>
               </td>
-              <td
-                onClick={() => {
-                  //dispatch
-                  setRecvOffer(!recvOffer);
-                }}
-              >
-                {recvOffer ? <span>on</span> : <span>off</span>}
+              <td>
+                <Form.Group>
+                  <div className="switch d-inline m-r-10">
+                    <Form.Control
+                      type="checkbox"
+                      id="checked-recvOffer"
+                      defaultChecked={recvOffer}
+                      onChange={() => setRecvOffer(!recvOffer)}
+                    />
+                    <Form.Label htmlFor="checked-recvOffer" className="cr" />
+                  </div>
+                  <Form.Label>
+                    {recvOffer ? <span>on</span> : <span>off</span>}
+                  </Form.Label>
+                </Form.Group>
               </td>
-              <td
-                onClick={() => {
-                  //dispatch
-                  setOfferExpired(!offerExpired);
-                }}
-              >
-                {offerExpired ? <span>on</span> : <span>off</span>}
+              <td>
+                <Form.Group>
+                  <div className="switch d-inline m-r-10">
+                    <Form.Control
+                      type="checkbox"
+                      id="checked-offerExpired"
+                      defaultChecked={offerExpired}
+                      onChange={() => setOfferExpired(!offerExpired)}
+                    />
+                    <Form.Label htmlFor="checked-offerExpired" className="cr" />
+                  </div>
+                  <Form.Label>
+                    {offerExpired ? <span>on</span> : <span>off</span>}
+                  </Form.Label>
+                </Form.Group>
               </td>
-              <td
-                onClick={() => {
-                  //dispatch
-                  setBuySucceed(!buySucceed);
-                }}
-              >
-                {buySucceed ? <span>on</span> : <span>off</span>}
+              <td>
+                <Form.Group>
+                  <div className="switch d-inline m-r-10">
+                    <Form.Control
+                      type="checkbox"
+                      id="checked-buySucceed"
+                      defaultChecked={buySucceed}
+                      onChange={() => setBuySucceed(!buySucceed)}
+                    />
+                    <Form.Label htmlFor="checked-buySucceed" className="cr" />
+                  </div>
+                  <Form.Label>
+                    {buySucceed ? <span>on</span> : <span>off</span>}
+                  </Form.Label>
+                </Form.Group>
               </td>
-              <td
-                onClick={() => {
-                  //dispatch
-                  setRefSucceed(!refSucceed);
-                }}
-              >
-                {refSucceed ? <span>on</span> : <span>off</span>}
+              <td>
+                <Form.Group>
+                  <div className="switch d-inline m-r-10">
+                    <Form.Control
+                      type="checkbox"
+                      id="checked-refSucceed"
+                      defaultChecked={refSucceed}
+                      onChange={() => setRefSucceed(!refSucceed)}
+                    />
+                    <Form.Label htmlFor="checked-refSucceed" className="cr" />
+                  </div>
+                  <Form.Label>
+                    {refSucceed ? <span>on</span> : <span>off</span>}
+                  </Form.Label>
+                </Form.Group>
               </td>
-              <td
-                onClick={() => {
-                  //dispatch
-                  setRecvFeed(!recvFeed);
-                }}
-              >
-                {recvFeed ? <span>on</span> : <span>off</span>}
+              <td>
+                <Form.Group>
+                  <div className="switch d-inline m-r-10">
+                    <Form.Control
+                      type="checkbox"
+                      id="checked-recvFeed"
+                      defaultChecked={recvFeed}
+                      onChange={() => setRecvFeed(!recvFeed)}
+                    />
+                    <Form.Label htmlFor="checked-recvFeed" className="cr" />
+                  </div>
+                  <Form.Label>
+                    {recvFeed ? <span>on</span> : <span>off</span>}
+                  </Form.Label>
+                </Form.Group>
               </td>
-              <td
-                onClick={() => {
-                  //dispatch
-                  setRecvRoyal(!recvRoyal);
-                }}
-              >
-                {recvRoyal ? <span>on</span> : <span>off</span>}
+              <td>
+                <Form.Group>
+                  <div className="switch d-inline m-r-10">
+                    <Form.Control
+                      type="checkbox"
+                      id="checked-recvRoyal"
+                      defaultChecked={recvRoyal}
+                      onChange={() => setRecvRoyal(!recvRoyal)}
+                    />
+                    <Form.Label htmlFor="checked-recvRoyal" className="cr" />
+                  </div>
+                  <Form.Label>
+                    {recvRoyal ? <span>on</span> : <span>off</span>}
+                  </Form.Label>
+                </Form.Group>
               </td>
             </tbody>
           </Table>

@@ -124,7 +124,7 @@ const MintingInspection = () => {
       <Row>
         <Col>
           <FunctionalTable
-            wrapName="mintingInspectionList"
+            wrapName="mintingInspectionList tableHasNo"
             keyList={keyList}
             tableData={tableData}
             search
@@ -134,22 +134,20 @@ const MintingInspection = () => {
           />
         </Col>
       </Row>
-      <Modal show={itemToggle} centered>
-        <Modal.Header style={{ textAlign: "center" }}>
+      <Modal className="itemPopup" show={itemToggle} centered>
+        <Modal.Header style={{ justifyContent: "center" }}>
           <Modal.Title>{itemList[dataIndex].name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Container>
-            <Row>
+            <Row className="imgContainer">
               <Col style={{ textAlign: "center" }}>
-                <img
-                  style={{ width: "400px", height: "400px" }}
-                  src={ItemImage}
-                  alt="gameItem"
-                />
+                <span className="imgBox">
+                  <img src={ItemImage} alt="gameItem" />
+                </span>
               </Col>
             </Row>
-            <Row>
+            <Row className="selectBox">
               <Col>
                 <Select
                   className="basic-single"
@@ -166,12 +164,17 @@ const MintingInspection = () => {
                 />
               </Col>
             </Row>
-            <Row>
-              <Col style={{ textAlign: "center" }}>
-                <Button variant="secondary" onClick={handleSubmit}>
+            <Row className="btnBox">
+              <Col className="actionBtnBox">
+                <Button
+                  className="grayBtn"
+                  variant="secondary"
+                  onClick={handleSubmit}
+                >
                   확인
                 </Button>
                 <Button
+                  className="whiteBtn"
                   variant="secondary"
                   onClick={() => {
                     setItemToggle(false);

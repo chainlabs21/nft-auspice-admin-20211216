@@ -14,7 +14,7 @@ const ManageTokenTable = () => {
     <Card>
       <Card.Body>
         <SubTitleWrapper>토큰 관리</SubTitleWrapper>
-        <Table>
+        <Table className="tableHasNo">
           <Table striped bordered hover>
             <thead>
               <th>No</th>

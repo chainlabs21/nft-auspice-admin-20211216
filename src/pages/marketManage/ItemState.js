@@ -97,7 +97,7 @@ const ItemState = () => {
       <Row>
         <Col>
           <FunctionalTable
-            wrapName="itemState"
+            wrapName="itemStateList tableHasNo"
             search
             datePicker
             refresh
