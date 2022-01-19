@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import PageTitle from "../../components/PageTitle";
 import styled from "styled-components";
+import axios from "axios";
+import { API } from "../../utils/api";
 
 const keyList = [
   {
@@ -43,6 +45,12 @@ const MemberState = () => {
     const temp = JsonToTableData(memberList, keyToValue);
     setTableData(temp);
   }, [memberList]);
+
+  useEffect(() => {
+    axios.get(API.API_GET_USERS).then((res) => {
+      console.log(res.data);
+    });
+  }, []);
 
   return (
     <>
