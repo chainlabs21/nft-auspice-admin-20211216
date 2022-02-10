@@ -2,3 +2,4 @@ node_modules
 tags
 .*.swp
 build
+.idea

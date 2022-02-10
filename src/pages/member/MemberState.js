@@ -1,4 +1,3 @@
-import moment from "moment";
 import FunctionalTable from "../../components/table/FunctionalTable";
 import { USER_DETAIL_URL, WALLET_QUERY_URL } from "../../config/urlDefine";
 import { useSelector } from "../../store/reducer";
@@ -6,7 +5,6 @@ import { JsonToTableData } from "../../utils/tableUtils";
 import { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import PageTitle from "../../components/PageTitle";
-import styled from "styled-components";
 import axios from "axios";
 import { API } from "../../utils/api";
 
@@ -41,6 +39,7 @@ const keyToValue = [
 const MemberState = () => {
   const { memberList } = useSelector((state) => state.member);
   const [tableData, setTableData] = useState([]);
+
   useEffect(() => {
     const temp = JsonToTableData(memberList, keyToValue);
     setTableData(temp);
