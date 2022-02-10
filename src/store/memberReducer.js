@@ -1,4 +1,3 @@
-import * as actionTypes from "./actions";
 import moment from "moment";
 
 export const initialState = {

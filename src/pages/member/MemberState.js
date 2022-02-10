@@ -7,6 +7,8 @@ import { Container, Row, Col } from "react-bootstrap";
 import PageTitle from "../../components/PageTitle";
 import axios from "axios";
 import { API } from "../../utils/api";
+import moment from 'moment'
+
 
 const keyList = [
   {
@@ -36,20 +38,36 @@ const keyToValue = [
   "collectionCount",
   "itemCount",
 ];
+
+
 const MemberState = () => {
-  const { memberList } = useSelector((state) => state.member);
+  // const { memberList } = useSelector((state) => state.member);
   const [tableData, setTableData] = useState([]);
+  const [users, setUsers] = useState([])
 
   useEffect(() => {
-    const temp = JsonToTableData(memberList, keyToValue);
-    setTableData(temp);
-  }, [memberList]);
-
-  useEffect(() => {
-    axios.get(API.API_GET_USERS).then((res) => {
-      console.log(res.data);
-    });
+    axios.get(API.API_GET_USERS(20)).then((res) => {
+      const getUserList = res.data.list
+      getUserList.map((user, index) => {
+        const information = {
+          no: index,
+          registerDate: user.maria.createdat,
+          walletAddress: user.maria.username,
+          nickname: user.maria.nickname,
+          email: user.maria.email,
+          state: 'Y',
+          collectionCount: 3,
+          itemCount: 3
+        }
+        setUsers(prev => [...prev, information])
+      })
+    })
   }, []);
+
+  // useEffect(() => {
+  //   const temp = JsonToTableData(users, keyToValue);
+  //   setTableData(temp);
+  // }, [users]);
 
   return (
     <>
@@ -63,7 +81,7 @@ const MemberState = () => {
           <Col>
             <FunctionalTable
               wrapName="tableHasNo"
-              tableData={tableData}
+              tableData={users}
               keyList={keyList}
               search
               datePicker
