@@ -52,6 +52,12 @@ const chartData = {
           url: "/item/state/orders",
         },
         {
+          id: "transactionState",
+          title: "트랜잭션 조회",
+          type: "item",
+          url: "/item/state/transaction",
+        },
+        {
           id: "MintingInspection",
           title: "MintingInspection",
           type: "item",
