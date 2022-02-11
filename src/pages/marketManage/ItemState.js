@@ -16,16 +16,14 @@ import {API} from '../../utils/api'
 const keyList = [
   { title: "No" },
   { title: "등록 일시", isDate: true },
-  { title: "상태", convertInt: ["정상", "검수중", "정책 위반"] },
-  { title: "숨김", convertInt: ["노출", "숨김"] },
   { title: "Item", hasChildren: true, numChildren: 6 },
   {
-    title: "name",
+    title: "아이템 명",
     isChildren: true,
     href: ITEM_DETAIL_URL + `?itemId=`,
     search: true,
   },
-  { title: "ID", isChildren: true },
+  { title: "아이템 ID", isChildren: true },
   { title: "토큰", isChildren: true },
   { title: "가격", isChildren: true },
   { title: "Contract", isChildren: true, href: CONTRACT_QUERY_URL },
@@ -65,8 +63,6 @@ const ItemState = () => {
         const fields = {
           no: index + 1,
           regDate: item.createdat,
-          state: '검수중',
-          hidden: item.status === -1 ? '숨김' : '노출',
           name: item.item.titlename,
           id: item.item.itemid,
           token: item.priceunit,
