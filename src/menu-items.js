@@ -58,6 +58,12 @@ const chartData = {
           url: "/item/state/transaction",
         },
         {
+          id: "salesHistory",
+          title: "판매 내역",
+          type: "item",
+          url: "/item/state/sales",
+        },
+        {
           id: "MintingInspection",
           title: "MintingInspection",
           type: "item",
