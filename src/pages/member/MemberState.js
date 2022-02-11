@@ -28,17 +28,18 @@ const keyList = [
   },
   { title: "Item 수" },
 ];
-const keyToValue = [
-  "no",
-  "registerDate",
-  "walletAddress",
-  "nickName",
-  "email",
-  "state",
-  "collectionCount",
-  "itemCount",
-];
+// const keyToValue = [
+//   "no",
+//   "registerDate",
+//   "walletAddress",
+//   "nickName",
+//   "email",
+//   "state",
+//   "collectionCount",
+//   "itemCount",
+// ];
 
+const DEFAULT_SIZE = 20
 
 const MemberState = () => {
   // const { memberList } = useSelector((state) => state.member);
@@ -46,11 +47,11 @@ const MemberState = () => {
   const [users, setUsers] = useState([])
 
   useEffect(() => {
-    axios.get(API.API_GET_USERS(20)).then((res) => {
+    axios.get(API.GET_USERS(DEFAULT_SIZE)).then((res) => {
       const getUserList = res.data.list
       getUserList.map((user, index) => {
         const information = {
-          no: index,
+          no: index + 1,
           registerDate: user.maria.createdat,
           walletAddress: user.maria.username,
           nickname: user.maria.nickname,

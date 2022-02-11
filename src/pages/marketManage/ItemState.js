@@ -10,6 +10,8 @@ import {
   WALLET_QUERY_URL,
 } from "../../config/urlDefine";
 import PageTitle from "../../components/PageTitle";
+import axios from 'axios'
+import {API} from '../../utils/api'
 
 const keyList = [
   { title: "No" },
@@ -52,11 +54,44 @@ const ItemState = () => {
     useSelector((state) => state.item);
 
   const [tableData, setTableData] = useState([]);
+  const [items, setItemList] = useState([])
+
+  const getItems = async () => {
+    const {data} = await axios.get(API.GET_ITEMS(20))
+    if(data) {
+      const {list} = data
+      console.log(list)
+      list.map((item, index) => {
+        const fields = {
+          no: index + 1,
+          regDate: item.createdat,
+          state: '검수중',
+          hidden: item.status === -1 ? '숨김' : '노출',
+          name: item.item.titlename,
+          id: item.item.itemid,
+          token: item.priceunit,
+          price: item.price,
+          contract: item.contract,
+          category: item.categorystr,
+          owner: item.author.nickname,
+          ownerAddress: item.author.username
+        }
+        setItemList(prevState => [...prevState, fields])
+      })
+    }
+  }
 
   useEffect(() => {
-    const temp = JsonToTableData(itemList, keyToValue);
-    setTableData(temp);
-  }, [itemList]);
+    getItems()
+  }, [])
+
+  console.log(items)
+
+  // useEffect(() => {
+  //   const temp = JsonToTableData(itemList, keyToValue);
+  //   setTableData(temp);
+  // }, [itemList]);
+
   return (
     <Container fluid>
       <Row>
@@ -103,7 +138,7 @@ const ItemState = () => {
             refresh
             excel
             keyList={keyList}
-            tableData={tableData}
+            tableData={items}
           />
         </Col>
       </Row>
