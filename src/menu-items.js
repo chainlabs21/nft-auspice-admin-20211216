@@ -46,6 +46,12 @@ const chartData = {
           url: "/item/state",
         },
         {
+          id: "orderState",
+          title: "주문 조회",
+          type: "item",
+          url: "/item/state/orders",
+        },
+        {
           id: "MintingInspection",
           title: "MintingInspection",
           type: "item",

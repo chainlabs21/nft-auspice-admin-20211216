@@ -4,6 +4,7 @@ import * as React from "react";
 const MemberState = React.lazy(() => import("./pages/member/MemberState"));
 const MemberInfo = React.lazy(() => import("./pages/member/MemberInfo"));
 const ItemState = React.lazy(() => import("./pages/marketManage/ItemState"));
+const OrdersState = React.lazy(() => import("./pages/marketManage/OrdersState"));
 const ItemDetail = React.lazy(() => import("./pages/marketManage/ItemDetail"));
 const MintingInspection = React.lazy(() =>
   import("./pages/marketManage/MintingInspection")
@@ -61,6 +62,12 @@ const routes = [
     exact: false,
     name: "ITEM 상세",
     component: ItemDetail,
+  },
+  {
+    path: "/item/state/orders",
+    exact: true,
+    name: "주문 조회",
+    component: OrdersState,
   },
   {
     path: "/mintingInspection",
