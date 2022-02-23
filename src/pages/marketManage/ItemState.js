@@ -2,6 +2,7 @@ import { Card, Table, Container, Row, Col } from "react-bootstrap";
 import FunctionalTable from "../../components/table/FunctionalTable";
 import { useSelector } from "../../store/reducer";
 import { useEffect, useState } from "react";
+import GeneralPagination from '../../utils/Pagination'
 import { JsonToTableData } from "../../utils/tableUtils";
 import {
   CONTRACT_QUERY_URL,
@@ -12,6 +13,7 @@ import {
 import PageTitle from "../../components/PageTitle";
 import axios from 'axios'
 import {API} from '../../utils/api'
+import moment from 'moment'
 
 const keyList = [
   { title: "No" },
@@ -53,35 +55,57 @@ const ItemState = () => {
 
   const [tableData, setTableData] = useState([]);
   const [items, setItemList] = useState([])
+  const [DEFAULT_SIZE, setDEFAULT_SIZE] = useState(20)
+  const [users, setUsers] = useState([])
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const [search, setSearch] = useState(false);
 
   const getItems = async () => {
-    const {data} = await axios.get(API.GET_ITEMS(20))
+    const {data} = await axios.get(API.GET_ITEMS(DEFAULT_SIZE, DEFAULT_SIZE*(page-1)))
     if(data) {
+      setItemList([])
       const {list} = data
-      console.log(list)
+      //console.log(list)
       list.map((item, index) => {
+
+        //console.log(item.author?.nickname)
         const fields = {
           no: index + 1,
-          regDate: item.createdat,
+          regDate: moment(item.createdat).format('YYYY-MM-DD'),
           name: item.item.titlename,
           id: item.item.itemid,
           token: item.priceunit,
           price: item.price,
           contract: item.contract,
           category: item.categorystr,
-          owner: item.author.nickname,
-          ownerAddress: item.author.username
+          owner: item.author?.nickname,
+          ownerAddress: item.author?.username
         }
         setItemList(prevState => [...prevState, fields])
       })
     }
+    axios.get(API.GET_COUNT('items')).then((res) => {
+      setCount(parseInt(res.data.resp))
+      console.log(count)
+    })
   }
 
   useEffect(() => {
     getItems()
-  }, [])
 
-  console.log(items)
+  }, [page, DEFAULT_SIZE])
+
+  const CallbackfromPagination=(e)=>{
+    setPage(e)
+    setSearch(false)
+    console.log(e)
+  }
+  const CallbackfromTable=(e)=>{
+    setDEFAULT_SIZE(e)
+  }
+
+  //console.log(items)
 
   // useEffect(() => {
   //   const temp = JsonToTableData(itemList, keyToValue);
@@ -128,6 +152,7 @@ const ItemState = () => {
       <Row>
         <Col>
           <FunctionalTable
+            passtheCount={CallbackfromTable}
             wrapName="itemStateList tableHasNo"
             search
             datePicker
@@ -138,6 +163,7 @@ const ItemState = () => {
           />
         </Col>
       </Row>
+      <GeneralPagination passToParent={CallbackfromPagination} count={count} size={DEFAULT_SIZE}/>
     </Container>
   );
 };

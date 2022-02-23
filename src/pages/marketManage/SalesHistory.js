@@ -37,9 +37,9 @@ const SalesHistory = () => {
                     expirychar: transaction.expirychar,
                     seller: transaction.seller,
                     buyer: transaction.buyer,
-                    token: transaction.item.priceunit,
+                    token: transaction.item?.priceunit,
                     price: transaction.price,
-                    contract: transaction.item.contract
+                    contract: transaction.item?.contract
                 }
                 setSalesHistory(prevState => [...prevState, information])
             })

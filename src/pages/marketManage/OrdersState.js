@@ -5,6 +5,8 @@ import { Container, Row, Col } from "react-bootstrap";
 import PageTitle from "../../components/PageTitle";
 import axios from "axios";
 import { API } from "../../utils/api";
+import moment from 'moment'
+import GeneralPagination from '../../utils/Pagination'
 
 
 const keyList = [
@@ -27,26 +29,43 @@ const DEFAULT_SIZE = 20
 
 const MemberState = () => {
     const [orders, setOrders] = useState([])
+    const [DEFAULT_SIZE, setDEFAULT_SIZE] = useState(20)
+    const [users, setUsers] = useState([])
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(0);
+    const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(API.GET_ORDERS(DEFAULT_SIZE)).then((res) => {
+        axios.get(API.GET_ORDERS(DEFAULT_SIZE, DEFAULT_SIZE*(page-1))).then((res) => {
             const {list} = res.data
+            setOrders([])
             list.map((order, index) => {
                 const information = {
                     no: index + 1,
                     image: order.item.url,
-                    registerDate: order.createdat,
-                    updateDate: order.item.updatedat,
-                    title: order.item.titlename,
-                    owner: order.author.nickname,
-                    token: order.item.priceunit,
-                    maxPrice: order.item.pricemax,
-                    minPrice: order.item.pricemin
+                    registerDate: moment(order.createdat).format('YYYY-MM-DD'),
+                    updateDate: moment(order.item.updatedat).format('YYYY-MM-DD'),
+                    title: order.item?.titlename,
+                    owner: order.author?.nickname,
+                    token: order.item?.priceunit,
+                    maxPrice: order.item?.pricemax,
+                    minPrice: order.item?.pricemin
                 }
                 setOrders(prev => [...prev, information])
             })
         })
-    }, []);
+        axios.get(API.GET_COUNT('orders')).then((res) => {
+            setCount(parseInt(res.data.resp))
+            console.log(count)
+          })
+    }, [page, DEFAULT_SIZE]);
+    const CallbackfromPagination=(e)=>{
+        setPage(e)
+        setSearch(false)
+      }
+      const CallbackfromTable=(e)=>{
+        setDEFAULT_SIZE(e)
+      }
 
     return (
         <>
@@ -59,6 +78,7 @@ const MemberState = () => {
                 <Row>
                     <Col>
                         <FunctionalTable
+                        passtheCount={CallbackfromTable}
                             wrapName="tableHasNo"
                             tableData={orders}
                             keyList={keyList}
@@ -69,6 +89,7 @@ const MemberState = () => {
                         />
                     </Col>
                 </Row>
+                <GeneralPagination passToParent={CallbackfromPagination} count={search? orders.length : count} size={DEFAULT_SIZE}/> 
             </Container>
         </>
     );

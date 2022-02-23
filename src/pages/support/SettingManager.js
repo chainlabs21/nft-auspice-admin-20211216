@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { MODIFY_MANAGER, DELETE_MANAGER } from "../../store/managerReducer";
 import PageTitle from "../../components/PageTitle";
+import axios from "axios";
 const stateOption = [
   { value: 0, label: "정지" },
   { value: 1, label: "정상" },
@@ -78,7 +79,11 @@ const SettingManage = () => {
     setToggleSetting(false);
   };
   const handleSubmit = () => {
+    //POST
+    //axios.post()
+
     //dispatch
+    
     dispatch({
       type: MODIFY_MANAGER,
       payload: {
@@ -90,6 +95,7 @@ const SettingManage = () => {
         phone: phone,
       },
     });
+    
     setToggleSetting(false);
   };
   return (

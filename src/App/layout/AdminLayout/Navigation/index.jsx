@@ -99,9 +99,9 @@ const Navigation = () => {
     navBarClass = [...navBarClass, "container"];
   }
   return (
-    <nav className={navClass.join(" ")}>
+    <nav className={navClass.join(" ")} >
       {windowWidth < 992 ? (
-        <OutsideClick>
+        <OutsideClick >
           <div className="navbar-wrapper">
             <NavContent navigation={navigation.items} />
           </div>

@@ -1,4 +1,6 @@
 import * as React from "react";
+import Login from "../pages/admin/Login";
+import { useSelector } from "react-redux";
 import { lazy, Suspense } from "react";
 import { Switch, Route, useLocation } from "react-router-dom";
 import "../../node_modules/font-awesome/scss/font-awesome.scss";
@@ -10,14 +12,17 @@ import { Redirect } from "react-router-dom";
 import Config from "../config";
 const AdminLayout = lazy(() => import("./layout/AdminLayout"));
 const App = () => {
+  const { loggedin } = useSelector((state) => state.admin)
+  
   const location = useLocation();
   return (
     <>
-      <ScrollToTop>
+{loggedin?<ScrollToTop>
         <Suspense fallback={<Loader />}>
           <Route path={routesOnePage.map((x) => x.path)}>
             <Switch location={location} key={location.pathname}>
-              {routesOnePage.map((route, index) => {
+              {
+              routesOnePage.map((route, index) => {
                 return route.component ? (
                   <Route
                     key={index}
@@ -37,7 +42,9 @@ const App = () => {
           </Route>
         </Suspense>
       </ScrollToTop>
+      :<Login />}
       <div className="backdrop" />
+      
     </>
   );
 };

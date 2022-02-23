@@ -13,8 +13,10 @@ import {
 import { useSelector } from "../../store/reducer";
 import { JsonToTableData } from "../../utils/tableUtils";
 import FunctionalTable from "../../components/table/FunctionalTable";
-import { TiSpanner } from "react-icons/ti";
+import { TiSpanner, TiDelete } from "react-icons/ti";
 import styled from "styled-components";
+import axios from "axios";
+import { API } from "../../utils/api";
 import PageTitle from "../../components/PageTitle";
 import { BsFileArrowUpFill, BsFileArrowDownFill } from "react-icons/bs";
 import {
@@ -27,10 +29,7 @@ import I_dnPolygonGray from "../../assets/images/I_dnPolygonGray.svg";
 import Select from "react-select";
 
 const stateOption = [
-  {
-    value: 0,
-    label: "숨김",
-  },
+  {value: 0,label: "숨김",},
   { value: 1, label: "공개" },
 ];
 
@@ -43,8 +42,8 @@ const keyList = [
   { title: "수정", hasCallback: true },
 ];
 
-const keyToValue = ["no", "name", "state", "displayOrder", "numItems"];
 const ManageCategory = () => {
+  const { level } = useSelector((state)=>state.admin)
   const { categoryList } = useSelector((state) => state.market);
   const [tableData, setTableData] = useState([]);
   const [toggleRegister, setToggleRegister] = useState(false);
@@ -56,7 +55,7 @@ const ManageCategory = () => {
   const [sortedCategory, setSortedCategory] = useState([]);
   const [curState, setCurState] = useState(0);
   const dispatch = useDispatch();
-
+console.log(level)
   const changeDisplayOrder = (index, direction) => {
     const temp = sortedCategory;
     if (direction === 0) {
@@ -113,7 +112,34 @@ const ManageCategory = () => {
     setToggleSettings(false);
     setVisible(false);
   };
+  //DB에서 카테고리 리스트 요청
+  //Broken af
+  useEffect(() => {
+    axios.get(API.GET_CATEGORIES(20)).then((res) => {
+      setTableData([])
+      const getCategories = res.data.list
+      getCategories.map((cat, index) => {
+        const settingData = {
+          icon: <TiSpanner style={{ fontSize: "24px" }} />,
+          callback: (index) => {
+            setToggleSettings(true);
+            setDataIndex(index);
+          },
+        };
+        const information = {
+          no: index + 1,
+          category: cat.category,
+          visible: cat.visible,
+          displayOrder: cat.displayOrder,
+          itemsize: 105,
+          edit: settingData,
+        }
 
+        setTableData(prev => [...prev, information])
+      })
+    })
+  }, []);
+/*
   useEffect(() => {
     const sortmap = [...categoryList];
     const sortedTemp = sortmap.sort((a, b) => {
@@ -145,7 +171,7 @@ const ManageCategory = () => {
     });
     setActive(activeIndex);
   }, [dataIndex, sortedCategory]);
-
+*/
   return (
     <Container fluid>
       <Row>

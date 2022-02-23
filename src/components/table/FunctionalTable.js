@@ -35,6 +35,7 @@ import {
 const MAX_FILTER_NUMBER = 3;
 
 const FunctionalTable = ({
+  passtheCount=()=>{},
   keyList,
   tableData,
   wrapName = false,
@@ -61,6 +62,8 @@ const FunctionalTable = ({
   const [filterTargetArr, setFilterTargetArr] = useState([]);
   const [filterTitleArr, setFilterTitleArr] = useState([]);
   const showCountList = [20, 40, 60, 80];
+
+  passtheCount(showCount);
 
   const handleRefresh = () => {
     //dispatch

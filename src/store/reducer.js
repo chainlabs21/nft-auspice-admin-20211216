@@ -11,6 +11,7 @@ import managerReducer from "./managerReducer";
 import memberReducer from "./memberReducer";
 import systemReducer from "./systemReducer";
 import uiReducer from "./uiReducer";
+import adminReducer from "./adminReducer";
 
 const reducer = combineReducers({
   able: ableReducer,
@@ -24,6 +25,7 @@ const reducer = combineReducers({
   member: memberReducer,
   system: systemReducer,
   ui: uiReducer,
+  admin: adminReducer
 });
 export const useSelector = createSelectorHook();
 export default reducer;

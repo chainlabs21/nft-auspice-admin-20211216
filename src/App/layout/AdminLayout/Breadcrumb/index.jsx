@@ -54,7 +54,7 @@ const Breadcrumb = (props) => {
       </div>
     </div>
   );
-  document.title = title + " | Able Pro Premium React + Redux Admin Template";
+  document.title = title;
   return <>{breadcrumb}</>;
 };
 export default Breadcrumb;

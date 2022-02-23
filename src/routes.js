@@ -2,12 +2,14 @@ import * as React from "react";
 
 //Pages
 const MemberState = React.lazy(() => import("./pages/member/MemberState"));
+const Login = React.lazy(() => import("./pages/admin/Login"));
 const MemberInfo = React.lazy(() => import("./pages/member/MemberInfo"));
 const ItemState = React.lazy(() => import("./pages/marketManage/ItemState"));
 const OrdersState = React.lazy(() => import("./pages/marketManage/OrdersState"));
 const TransactionState = React.lazy(() => import("./pages/marketManage/TransactionState"));
 const SalesHistory = React.lazy(() => import("./pages/marketManage/SalesHistory"));
 const ItemDetail = React.lazy(() => import("./pages/marketManage/ItemDetail"));
+const auctionSettlement = React.lazy(() => import("./pages/auction/AuctionSettlement"));
 const MintingInspection = React.lazy(() =>
   import("./pages/marketManage/MintingInspection")
 );
@@ -36,11 +38,18 @@ const DashboardDefault = React.lazy(() => import("./Demo/Dashboard/Default"));
 
 const routes = [
   {
+    path: "/",
+    exact: true,
+    name: "로그인",
+    component: Login
+  },
+  {
     path: "/dashboard/",
     exact: true,
     name: "대쉬 보드",
     component: DashboardDefault,
   },
+
   {
     path: "/member/state",
     exact: true,
@@ -154,6 +163,12 @@ const routes = [
     exact: true,
     name: "시스템 계정",
     component: SystemAccount,
+  },
+  {
+    path: "/auction/settlement",
+    exact: true,
+    name: "경매정산",
+    component: auctionSettlement,
   },
 ];
 export default routes;

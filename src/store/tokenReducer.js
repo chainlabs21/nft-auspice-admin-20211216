@@ -1,5 +1,5 @@
-import * as actionTypes from "./actions";
-import moment from "moment";
+//import * as actionTypes from "./actions";
+//import moment from "moment";
 const mokup = {
   tokenList: [
     {

@@ -9,6 +9,7 @@ import * as actionTypes from "../../../../../store/actions";
 import { useSelector } from "../../../../../store/reducer";
 const NavContent = (props) => {
   const dispatch = useDispatch();
+  const {level} = useSelector((state)=>state.admin)
   const layout = useSelector((state) => state.able.layout);
   const rtlLayout = useSelector((state) => state.able.rtlLayout);
   const onNavContentLeave = () =>
@@ -58,7 +59,9 @@ const NavContent = (props) => {
   const navItems = props.navigation.map((item) => {
     switch (item.type) {
       case "group":
+        if (item.level<=level){
         return <NavGroup key={item.id} group={item} />;
+        }
       default:
         return false;
     }
@@ -110,8 +113,10 @@ const NavContent = (props) => {
       </div>
     );
   } else {
+    //네비게이션 아이템은 이쪽 참고
     mainContent = (
-      <div className="navbar-content next-scroll">
+      <div className="navbar-content next-scroll" > 
+      
         <PerfectScrollbar options={{ wheelSpeed: 2, swipeEasing: true }}>
           <ul className="nav pcoded-inner-navbar" id="nav-ps-next">
             {navItems}

@@ -5,6 +5,8 @@ import { Container, Row, Col } from "react-bootstrap";
 import PageTitle from "../../components/PageTitle";
 import axios from "axios";
 import { API } from "../../utils/api";
+import moment from 'moment';
+import GeneralPagination from "../../utils/Pagination";
 
 
 const keyList = [
@@ -23,30 +25,46 @@ const keyList = [
     { title: "최저가" },
 ];
 
-const DEFAULT_SIZE = 20
 
 const TransactionState = () => {
     const [transactions, setTransactions] = useState([])
+    const [DEFAULT_SIZE, setDEFAULT_SIZE] = useState(20)
+    const [tableData, setTableData] = useState([]);
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(0);
+    const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(API.GET_TRANSACTIONS(DEFAULT_SIZE)).then((res) => {
+        axios.get(API.GET_TRANSACTIONS(DEFAULT_SIZE, DEFAULT_SIZE*(page-1))).then((res) => {
+            setTransactions([])
             const {list} = res.data
             list.map((order, index) => {
                 const information = {
                     no: index + 1,
                     transaction: order.txhash,
-                    registerDate: order.createdat,
+                    registerDate: moment(order.createdat).format("YYYY-MM-DD"),
                     itemId: order.itemid,
                     user: order.username,
-                    token: order.item.priceunit,
+                    token: order.item?.priceunit,
                     price: order.price,
-                    maxPrice: order.item.pricemax,
-                    minPrice: order.item.pricemin
+                    maxPrice: order.item?.pricemax,
+                    minPrice: order.item?.pricemin
                 }
                 setTransactions(prev => [...prev, information])
             })
         })
-    }, []);
+        axios.get(API.GET_COUNT('transactions')).then((res) => {
+            setCount(parseInt(res.data.resp))
+            console.log(count)
+          })
+    }, [page, DEFAULT_SIZE]);
+    const CallbackfromPagination=(e)=>{
+        setPage(e)
+        setSearch(false)
+      }
+    const CallbackfromTable=(e)=>{
+        setDEFAULT_SIZE(e)
+    }
 
     return (
         <>
@@ -59,6 +77,7 @@ const TransactionState = () => {
                 <Row>
                     <Col>
                         <FunctionalTable
+                        passtheCount={CallbackfromTable}
                             wrapName="tableHasNo"
                             tableData={transactions}
                             keyList={keyList}
@@ -69,6 +88,7 @@ const TransactionState = () => {
                         />
                     </Col>
                 </Row>
+                <GeneralPagination passToParent={CallbackfromPagination} count={search? transactions.length : count} size={DEFAULT_SIZE}/>
             </Container>
         </>
     );

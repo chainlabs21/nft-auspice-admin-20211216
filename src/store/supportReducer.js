@@ -1,5 +1,5 @@
-import * as actionTypes from "./actions";
-import { mokup, faqMokup } from "./supportMokup";
+//import * as actionTypes from "./actions"; , faqMokup
+import { mokup } from "./supportMokup";
 import produce from "immer";
 import moment from "moment";
 

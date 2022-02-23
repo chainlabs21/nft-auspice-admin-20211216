@@ -4,6 +4,7 @@ import { useSelector } from "../../store/reducer";
 import { JsonToTableData } from "../../utils/tableUtils";
 import { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import GeneralPagination from '../../utils/Pagination'
 import PageTitle from "../../components/PageTitle";
 import axios from "axios";
 import { API } from "../../utils/api";
@@ -39,20 +40,27 @@ const keyList = [
 //   "itemCount",
 // ];
 
-const DEFAULT_SIZE = 20
+
+let PAGE_NUMBER = 0
 
 const MemberState = () => {
   // const { memberList } = useSelector((state) => state.member);
+  const [DEFAULT_SIZE, setDEFAULT_SIZE] = useState(20)
   const [tableData, setTableData] = useState([]);
   const [users, setUsers] = useState([])
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const [search, setSearch] = useState(false);
 
   useEffect(() => {
-    axios.get(API.GET_USERS(DEFAULT_SIZE)).then((res) => {
+    //pagination starts here
+    axios.get(API.GET_USERS(DEFAULT_SIZE, DEFAULT_SIZE*(page-1))).then((res) => {
+      setUsers('')
       const getUserList = res.data.list
       getUserList.map((user, index) => {
         const information = {
           no: index + 1,
-          registerDate: user.maria.createdat,
+          registerDate: moment(user.maria.createdat).format('YYYY-MM-DD'),
           walletAddress: user.maria.username,
           nickname: user.maria.nickname,
           email: user.maria.email,
@@ -63,13 +71,18 @@ const MemberState = () => {
         setUsers(prev => [...prev, information])
       })
     })
-  }, []);
-
-  // useEffect(() => {
-  //   const temp = JsonToTableData(users, keyToValue);
-  //   setTableData(temp);
-  // }, [users]);
-
+    axios.get(API.GET_COUNT('users')).then((res) => {
+      setCount(parseInt(res.data.resp))
+      console.log(count)
+    })
+  }, [page, DEFAULT_SIZE]);
+  const CallbackfromPagination=(e)=>{
+    setPage(e)
+    setSearch(false)
+  }
+  const CallbackfromTable=(e)=>{
+    setDEFAULT_SIZE(e)
+  }
   return (
     <>
       <Container fluid>
@@ -81,6 +94,7 @@ const MemberState = () => {
         <Row>
           <Col>
             <FunctionalTable
+              passtheCount={CallbackfromTable}
               wrapName="tableHasNo"
               tableData={users}
               keyList={keyList}
@@ -91,7 +105,9 @@ const MemberState = () => {
             />
           </Col>
         </Row>
+        <GeneralPagination passToParent={CallbackfromPagination} count={search? users.length : count} size={DEFAULT_SIZE}/> 
       </Container>
+     
     </>
   );
 };
