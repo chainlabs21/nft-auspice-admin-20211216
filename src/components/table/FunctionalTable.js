@@ -46,6 +46,7 @@ const FunctionalTable = ({
   datePicker = false,
   excel = false,
   clean = false,
+  onSelect,
 }) => {
   const [dataArr, setDataArr] = useState([]);
   const [showCount, setShowCount] = useState(20);
@@ -519,10 +520,19 @@ const FunctionalTable = ({
                     )}
                     <tbody>
                       {dataArr.map((data, i) => (
-                        <tr key={i}>
+                        <tr key={i} onClick={()=>{onSelect([data[4], data[5]])}}>
                           {data.map((v, j) => {
                             if (refinedKeyList[j] === undefined) {
                               return null;
+                            }
+                            if (refinedKeyList[j].displayNull) {
+                              return null;
+                            }
+                            if (refinedKeyList[j].isImage) {
+                              return (<td key={j}>
+                                
+                                <img src={v} style={{width: '200px', height:'200px', marginTop:'15px', marginBottom:'15px'}}/>
+                                </td>);
                             }
                             if (refinedKeyList[j].hasCallback) {
                               return (

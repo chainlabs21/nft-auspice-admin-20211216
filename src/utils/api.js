@@ -1,4 +1,4 @@
-const apiServer = "http://localhost:32287";
+const apiServer = "http://itemverse1.net:32287";
 export const API = {
   GET_USERS: (size, off=0) => `${apiServer}/queries/rows/users/active/1/${off}/${size}/id/DESC?userdetail=1`,
   GET_ITEMS: (size, off=0) => `${apiServer}/queries/rows/items/active/1/${off}/${size}/id/DESC?userdetail=1`,
@@ -10,6 +10,7 @@ export const API = {
   GET_COUNT: (tablename) => `${apiServer}/queries/count/${tablename}`,
   GET_COUNT_OPTION:(tablename, fieldname, fieldval)=>`${apiServer}/queries/count/${tablename}/${fieldname}/${fieldval}`,
   GET_SALES_HISTORY: (size) => `${apiServer}/queries/rows/logorders/status/1/0/${size}/id/DESC?itemdetail=1`,
+  GET_FEATURED: `${apiServer}/queries/featured/rows/`,
 
 
 

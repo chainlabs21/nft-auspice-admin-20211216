@@ -73,7 +73,7 @@ const Login=()=>{
 return(
     <>
     <div>
-    <Form style={{width:'600px', margin: 'auto auto', margintop:'100px;'}}>
+    <Form style={{width:'600px', margin: 'auto auto', margintop:'100px'}}>
     <h1>관리자 로그인 패널</h1>
         <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Account:  </Form.Label>
