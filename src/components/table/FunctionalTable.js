@@ -46,7 +46,8 @@ const FunctionalTable = ({
   datePicker = false,
   excel = false,
   clean = false,
-  onSelect,
+  onSelect =()=>{},
+  selectItem
 }) => {
   const [dataArr, setDataArr] = useState([]);
   const [showCount, setShowCount] = useState(20);
@@ -527,6 +528,14 @@ const FunctionalTable = ({
                             }
                             if (refinedKeyList[j].displayNull) {
                               return null;
+                            }
+                            if (refinedKeyList[j].isSelect){
+                              return(<td key={j}>
+                                <label className="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
+                                  <input type="checkbox" className="custom-control-input" onChange={e=>{selectItem({[v]: e.target.checked});console.log(e.target.checked)}}/>
+                                  <span className="custom-control-label"/>
+                                </label>
+                              </td>)
                             }
                             if (refinedKeyList[j].isImage) {
                               return (<td key={j}>

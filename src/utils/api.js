@@ -11,6 +11,7 @@ export const API = {
   GET_COUNT_OPTION:(tablename, fieldname, fieldval)=>`${apiServer}/queries/count/${tablename}/${fieldname}/${fieldval}`,
   GET_SALES_HISTORY: (size) => `${apiServer}/queries/rows/logorders/status/1/0/${size}/id/DESC?itemdetail=1`,
   GET_FEATURED: `${apiServer}/queries/featured/rows/`,
+  SWAP_ITEMS: `${apiServer}/admin/featured/swap`,
 
 
 
