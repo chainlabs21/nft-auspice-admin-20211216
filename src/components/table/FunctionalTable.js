@@ -47,7 +47,8 @@ const FunctionalTable = ({
   excel = false,
   clean = false,
   onSelect =()=>{},
-  selectItem
+  selectItem,
+  selectCreateItem
 }) => {
   const [dataArr, setDataArr] = useState([]);
   const [showCount, setShowCount] = useState(20);
@@ -160,7 +161,8 @@ const FunctionalTable = ({
       });
     } else {
       filteredData.forEach((data) => {
-        if (data[searchIndex].toString() === searchValue.toString()) {
+        if (data[searchIndex] === searchValue) {
+          console.log(data)
           temp.push(data);
         }
       });
@@ -521,7 +523,7 @@ const FunctionalTable = ({
                     )}
                     <tbody>
                       {dataArr.map((data, i) => (
-                        <tr key={i} onClick={()=>{onSelect([data[4], data[5]])}}>
+                        <tr key={i} onClick={()=>{onSelect([data[4], data[5], data[3]])}}>
                           {data.map((v, j) => {
                             if (refinedKeyList[j] === undefined) {
                               return null;
@@ -529,8 +531,21 @@ const FunctionalTable = ({
                             if (refinedKeyList[j].displayNull) {
                               return null;
                             }
+                            if (refinedKeyList[j].isButton){
+                              return(<td key={j} style={{
+                                textAlign: 'center', 
+                                verticalAlign: 'middle'
+                              }}>
+                               <Button onClick={e=>{selectCreateItem(v)}}> 선택</Button>
+                               
+                              </td>)
+                            }
                             if (refinedKeyList[j].isSelect){
-                              return(<td key={j}>
+                              return(<td key={j}
+                              style={{
+                                textAlign: 'center', 
+                                verticalAlign: 'middle'
+                              }}>
                                 <label className="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
                                   <input type="checkbox" className="custom-control-input" onChange={e=>{selectItem({[v]: e.target.checked});console.log(e.target.checked)}}/>
                                   <span className="custom-control-label"/>
@@ -540,19 +555,28 @@ const FunctionalTable = ({
                             if (refinedKeyList[j].isImage) {
                               return (<td key={j}>
                                 
-                                <img src={v} style={{width: '200px', height:'200px', marginTop:'15px', marginBottom:'15px'}}/>
+                                <img src={v} style={{width: '128px', height:'128px', marginTop:'15px', marginBottom:'15px'}}/>
                                 </td>);
+                            }
+                            if (refinedKeyList[j].isSecret) {
+                              return null;
                             }
                             if (refinedKeyList[j].hasCallback) {
                               return (
-                                <td key={j} onClick={() => v.callback(i)}>
+                                <td key={j} style={{
+                                  textAlign: 'center', 
+                                  verticalAlign: 'middle'
+                                }} onClick={() => v.callback(i)}>
                                   {v.icon}
                                 </td>
                               );
                             }
                             if (refinedKeyList[j].convertInt) {
                               return (
-                                <td key={j}>
+                                <td key={j} style={{
+                                  textAlign: 'center', 
+                                  verticalAlign: 'middle'
+                                }}>
                                   {refinedKeyList[j].convertInt[v]}
                                 </td>
                               );
@@ -580,6 +604,8 @@ const FunctionalTable = ({
                                   textOverflow: "ellipsis",
                                   wordBreak: "break-all",
                                   tableLayout: "fixed",
+                                  textAlign: 'center', 
+                                  verticalAlign: 'middle'
                                 }}
                               >
                                 {v}

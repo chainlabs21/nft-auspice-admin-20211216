@@ -13,7 +13,9 @@ import {
 } from "react-bootstrap";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import moment from 'moment';
+
 import Select from "react-select";
 import { AiOutlinePlusSquare } from "react-icons/ai";
 import { useSelector } from "../../store/reducer";
@@ -43,9 +45,19 @@ const typeOption = [
 const MAX_ROW_LENGTH = 8;
 
 const Curation = () => {
-  const dispatch = useDispatch();
+  const myRef = useRef(null);
+
+  const keyList = [
+    { title: "큐레이션 no." },
+    { title: "수정", hasCallback: true },
+    { title: "상태", convertInt: ["숨김", "공개"] },
+    { title: "큐레이션 명" },
+    { title: "카테고리 코드" },
+    { title: "카테고리 타입" },
+  ];
+
   const itemKey = [
-    { title: "-", isSelect: true},
+    { title: "-", isSelect: true },
     { title: "아이템 no." },
     { title: "아이템", isImage: true },
     { title: "아이템 명" },
@@ -82,11 +94,37 @@ const Curation = () => {
     3: "link",
   };
 
-  const { curationArr, curationItems } = useSelector((state) => state.item);
-  const [curCategory, setCurCategory] = useState(0);
-  const [curItem, setCurItem] = useState(0);
-  const [openState, setOpenState] = useState(curationArr[0].state);
-  const [curationTitle, setCurationTitle] = useState(curationArr[0].title);
+  const selectItemsList = [
+    { title: "itemID", search: true },
+    { title: "등록 일시", isDate: true },
+    { title: "아이템", isImage:true},
+    { title: "아이템 명",search: true },
+    { title: "소유자", search: true},
+    { title: "토큰"},
+    { title: "가격"},
+    { title: "선택", isButton:true},
+  ];
+  const selectUsersList = [
+    { title: "등록 일시", isDate: true },
+    { title: "프로필 이미지", isImage:true},
+    { title: "닉네임", search: true },
+    { title: "지갑 주소"},
+    { title: "선택", isButton:true},
+  ];
+
+
+
+  const [showSelectItems, setShowSelectItems]=useState([]);
+  const [DEFAULT_SIZE, setDEFAULT_SIZE] = useState(20)
+  const [users, setUsers] = useState([])
+  const [page, setPage] = useState(1);
+  const [orderKey, setOrderKey]=useState('id');
+  const [orderVal, setOrderVal]=useState('DESC');
+  const [search, setSearch]=useState('');
+  const [filterVal, setFilterVal]=useState();
+
+
+  const [count, setCount]=useState(0);
   const [toggleRegister, setToggleRegister] = useState(false);
   const [toggleSettings, setToggleSettings] = useState(false);
   const [dataIndex, setDataIndex] = useState(0);
@@ -94,14 +132,13 @@ const Curation = () => {
   const [selectedCat, setSelectedCat] = useState();
   const [selectedCode, setSelectedCode] = useState(0);
   const [itemKeyList, setItemKeyList] = useState(itemKey);
+  const [searchItemKeyList, setSearchItemKeyList] = useState(selectItemsList)
 
-  const [itemsList, setItemsList] = useState({})
+  const [itemsList, setItemsList] = useState({});
 
-  const [itemMutable, setItemMutable] = useState(false)
-  const [mitems, setMitems]=useState([])
-
-  
-
+  const [itemMutable, setItemMutable] = useState(false);
+  const [mitems, setMitems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   const [itemsData, setItemsData] = useState([]);
 
@@ -109,40 +146,151 @@ const Curation = () => {
   const [curState, setCurState] = useState(1);
   const [typeState, setTypeState] = useState(0);
 
-  const [toggleItemRegister, setToggleItemRegister]=useState(false)
+  const [toggleItemRegister, setToggleItemRegister] = useState(false);
+  const [toggleAddLink, setToggleAddLink] = useState(false)
 
-  const keyList = [
-    { title: "큐레이션 no." },
-    { title: "수정", hasCallback: true },
-    { title: "상태", convertInt: ["숨김", "공개"] },
-    { title: "큐레이션 명" },
-    { title: "카테고리 코드" },
-    { title: "카테고리 타입" },
-  ];
+  //------------------------------------------
+  const [linktitle, setLinktitle]=useState("");
+  const [linkurl, setLinkurl]=useState("http://")
+  const [linkdesc, setLinkdesc]=useState("")
 
-  function onItemOrderSwap(base, target){
-    console.log(`${API.SWAP_ITEMS}/${selectedCat[0]}/${base}/${target}`)
-    axios.post(`${API.SWAP_ITEMS}/${selectedCat[0]}/${base}/${target}`).then(async (resp)=>{
+
+  //
+
+  const [toggleSearchItem, setToggleSearchItem] = useState(false);
+
+
+
+  //On Item Selection
+  async function onShowSelectItems(){
+    
+    if (selectedCat[1]==0 || selectedCat[1]==1){
+    const {data} = await axios.get('http://itemverse1.net:32287/admin/search/items')
+    if(data) {
+      setShowSelectItems([])
+      const {list} = data
+      //console.log(list)
+      list.map((item, index) => {
+        const fields = {
+          itemid: item.itemid,
+          regDate: moment(item.createdat).format('YYYY-MM-DD'),
+          image: item.url,
+          name: item.titlename,
+          owner: item.author_info?.nickname,
+          token: item.priceunit,
+          price: '10',
+          button: item.itemid,
+          id: item.itemid,
+          ownerAddress: item.author_info?.username
+        }
+        setShowSelectItems(prevState => [...prevState, fields])
+      })
+    }
+  }else if (selectedCat[1]==2){
+    //console.log("HELLLO")
+    const {data} = await axios.get('http://itemverse1.net:32287/admin/search/users')
+    //console.log(data)
+    if(data) {
+      setShowSelectItems([])
+      const {list} = data
+      console.log(list)
+      list.map((item, index) => {
+        const fields = {
+          regDate: moment(item.createdat).format('YYYY-MM-DD'),
+          image: item.profileimageurl,
+          name: item.nickname,
+          username: item.username,
+          button: item.username,
+          ownerAddress: item.author_info?.username
+        }
+        setShowSelectItems(prevState => [...prevState, fields])
+      })
+    }
+  }
+
+
+
+  }
+
+  function onAddToCategory(e){
+    console.log(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/${e}`)
+    axios
+      .post(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/${e}`)
+      .then((resp)=>{
+        console.log(resp)
+        if(resp.data.status=="ERR"){
+          alert('이미 등록된 아이템 입니다.')
+        }
+      })
+
+  }
+
+  function submitLinkitem(){
+    axios
+    .post(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/link`,null,{params:{title: linktitle, url: linkurl, description: linkdesc}})
+    .then((resp)=>{
       console.log(resp)
-      console.log('변경완료')
-      await getItemsList()
+      if(resp.data.status=="ERR"){
+        alert('뭐가 안되긴 했음')
+        
+      }
     })
   }
 
-  useEffect(()=>{
-    let SelectedLength = Object.keys(itemsList).filter((v, i)=>(itemsList[v]==true)).length
-    console.log(itemsList)
-    
-    if(SelectedLength==2){
-      setMitems(Object.keys(itemsList).filter((v, i)=>(itemsList[v]==true)))
-      setItemMutable(true)
-    }else{
-      setItemMutable(false)
-      setMitems([])
-    }
-  },[itemsList])
 
-  function getItemsList(){
+
+  function onItemOrderSwap(base, target) {
+    console.log(`${API.SWAP_ITEMS}/${selectedCat[0]}/${base}/${target}`);
+    axios
+      .post(`${API.SWAP_ITEMS}/${selectedCat[0]}/${base}/${target}`)
+      .then(async (resp) => {
+        console.log(resp);
+        console.log("변경완료");
+        await getItemsList();
+      });
+  }
+
+  async function onItemDelete() {
+    console.log(`${API.DELETE_ITEMS}/${selectedCat[0]}/`);
+    console.log(selectedItems);
+    await axios
+      .post(`${API.DELETE_ITEMS}/${selectedCat[0]}`, null, {
+        params: {
+          selectedItems,
+        },
+      })
+      .then(async (resp) => {
+        console.log(resp);
+        console.log("변경완료");
+        //await getItemsList()
+      });
+  }
+
+  //GET SELECTED ITEMS
+  useEffect(() => {
+    let SelectedLength = Object.keys(itemsList).filter(
+      (v, i) => itemsList[v] == true
+    ).length;
+    console.log(itemsList);
+    setSelectedItems(
+      Object.keys(itemsList).filter((v, i) => itemsList[v] == true)
+    );
+    if (SelectedLength == 2) {
+      setMitems(Object.keys(itemsList).filter((v, i) => itemsList[v] == true));
+      setItemMutable(true);
+    } else {
+      setItemMutable(false);
+      setMitems([]);
+    }
+  }, [itemsList]);
+
+  useEffect(() => {
+    setItemsList({});
+    setShowSelectItems([])
+    setToggleSearchItem(false)
+  }, [selectedCat]);
+
+  function getItemsList() {
     axios
       .get(
         `${API.GET_FEATURED}${TYPESTR[selectedCat[1]]}/code/${selectedCat[0]}`
@@ -201,7 +349,7 @@ const Curation = () => {
               callback: (i) => {
                 setToggleSettings(true);
                 setDataIndex(v.id);
-                console.log(v.id)
+                console.log(v.id);
               },
             };
             const item = {
@@ -213,36 +361,40 @@ const Curation = () => {
               edit: setting,
               title: v.title,
               desc: v.description,
-              url: v.url
+              url: v.url,
             };
             setItemsData((pre) => [...pre, item]);
           });
-        }
-        else{
+        } else {
           return;
         }
       });
-    }
+  }
 
   useEffect(() => {
-
     //selectedCat[0] - CODE
     //selectedCat[1] - TYPE
-    if (!selectedCat){return;}
+    if (!selectedCat) {
+      return;
+    }
     setItemsData([]);
     if (selectedCat[1] == 0) {
       setItemKeyList(itemKey);
+      setSearchItemKeyList(selectItemsList)
     }
     if (selectedCat[1] == 1) {
       setItemKeyList(itemKey);
+      setSearchItemKeyList(selectItemsList)
     }
     if (selectedCat[1] == 2) {
       setItemKeyList(userKey);
+      setSearchItemKeyList(selectUsersList)
     }
     if (selectedCat[1] == 3) {
       setItemKeyList(linkKey);
+      
     }
-    getItemsList()
+    getItemsList();
   }, [selectedCat]);
 
   useEffect(() => {
@@ -282,9 +434,9 @@ const Curation = () => {
     setToggleRegister(false);
   };
 
-  const submitItemRegister=()=>{
-    setToggleItemRegister(false)
-  }
+  const submitItemRegister = () => {
+    setToggleItemRegister(false);
+  };
 
   return (
     <CurationBox>
@@ -314,10 +466,25 @@ const Curation = () => {
             />
           </Col>
         </Row>
+        <Row>
+          <PageTitle title={selectedCat?(selectedCat[2]):"선택된 항목 없음"} />
+        </Row>
 
         <Row>
           <Col style={{ paddingBottom: "30px" }}>
-            <Button variant="secondary" onClick={() => setToggleItemRegister(true)}>
+            <Button
+              variant="secondary"
+              onClick={async () => {
+                if(selectedCat){
+                  if(selectedCat[1]==3){
+                    setToggleAddLink(true); return;
+                  }
+                await setToggleSearchItem(!toggleSearchItem);
+                await onShowSelectItems();
+                myRef.current.scrollIntoView();
+                }
+              }}
+            >
               신규 등록
             </Button>
             <Button
@@ -330,7 +497,7 @@ const Curation = () => {
             </Button>
             <Button
               variant="secondary"
-              onClick={() => setToggleRegister(true)}
+              onClick={() => onItemDelete()}
               style={{ marginLeft: "15px" }}
             >
               삭제
@@ -344,15 +511,40 @@ const Curation = () => {
               keyList={itemKeyList}
               tableData={itemsData}
               refresh
-              selectItem={(e) => {setItemsList({...itemsList, ...e})
+              selectItem={(e) => {
+                setItemsList({ ...itemsList, ...e });
                 // setSelectedCat(e);
               }}
-              onSelect={(e)=>{}}
+              onSelect={(e) => {}}
             />
           </Col>
         </Row>
 
-        {/* ---------- ADD Curation Tab MODAL START---------- */}
+        {/* SELECT ITEM PAGE */}
+        {/* SELECT ITEM PAGE */}
+        {/* SELECT ITEM PAGE */}
+        <Row className={toggleSearchItem ? "" : "d-none"} ref={myRef}>
+          <PageTitle title={"아이템 선택"} />
+          <Col>
+            <FunctionalTable
+              wrapName="tableHasNo"
+              keyList={searchItemKeyList}
+              tableData={showSelectItems}
+              search
+              selectItem={(e) => {
+                setItemsList({ ...itemsList, ...e });
+                // setSelectedCat(e);
+              }}
+              selectCreateItem={(e)=>{onAddToCategory(e)}}//onAddToCategory
+              onSelect={(e) => {}}
+            />
+          </Col>
+        </Row>
+        {/* SELECT ITEM PAGE */}
+        {/* SELECT ITEM PAGE */}
+        {/* SELECT ITEM PAGE */}
+
+{/* ---------- ADD Curation Tab MODAL START---------- */}
         <Modal className="inpuListPopup" show={toggleRegister} centered>
           <Modal.Header>카테고리 등록</Modal.Header>
           <Modal.Body>
@@ -432,9 +624,9 @@ const Curation = () => {
           </Modal.Body>
         </Modal>
 
-        {/* ---------- ADD Curation Tab MODAL END ---------- */}
+{/* ---------- ADD Curation Tab MODAL END ---------- */}
 
-        {/* ---------- ADD ITEM Register Tab MODAL START---------- */}
+{/* ---------- ADD ITEM Register Tab MODAL START---------- */}
         <Modal className="inpuListPopup" show={toggleItemRegister} centered>
           <Modal.Header>아이템 등록</Modal.Header>
           <Modal.Body>
@@ -447,7 +639,7 @@ const Curation = () => {
                       <div className="key">카테고리 코드 :</div>
 
                       <div className="value">
-                        {selectedCat?selectedCat[0]:"선택된 카테고리 없음"}
+                        {selectedCat ? selectedCat[0] : "선택된 카테고리 없음"}
                         {/* <Form.Control
                           onChange={(e) => setCategoryName(e.target.value)}
                           value={categoryName}
@@ -515,7 +707,101 @@ const Curation = () => {
           </Modal.Body>
         </Modal>
 
-        {/* ---------- ADD ITEM Register Tab MODAL END ---------- */}
+{/* ---------- ADD ITEM Register Tab MODAL END ---------- */}
+
+{/* ---------- ADD LINK Tab MODAL START---------- */}
+        <Modal className="inpuListPopup" show={toggleAddLink} centered>
+          <Modal.Header>링크 등록</Modal.Header>
+          <Modal.Body>
+            <Container>
+              <Row className="inputBox">
+                <Col>
+                  <ul className="inputList">
+                    {/* ---------- LINK TITLE ---------- */}
+                    <li>
+                      <div className="key">링크 이름 :</div>
+
+                      <div className="value">
+                        <Form.Control
+                          onChange={(e) => setLinktitle(e.target.value)}
+                          value={linktitle}
+                        ></Form.Control>
+                      </div>
+                    </li>
+                    {/* ---------- LINK TITLE ---------- */}
+                    {/* ---------- LINK URL ---------- */}
+                    <li>
+                      <div className="key">링크 URL :</div>
+
+                      <div className="value">
+                        <Form.Control
+                          onChange={(e) => setLinkurl(e.target.value)}
+                          value={linkurl}
+                        ></Form.Control>
+                      </div>
+                    </li>
+                    {/* ---------- LINK URL ---------- */}
+
+                    {/* ---------- LINK DESC ---------- */}
+                    <li>
+                      <div className="key">링크 설명 :</div>
+
+                      <div className="value">
+                        <Form.Control 
+                          as="textarea"
+                          rows={2}
+                          onChange={(e) => setLinkdesc(e.target.value)}
+                          value={linkdesc}
+                        ></Form.Control>
+                      </div>
+                    </li>
+                    {/* ---------- LINK DESC ---------- */}
+
+                    {/* ---------- VISIBLE STATUS ---------- */}
+                    <li>
+                      <div className="key">상태 :</div>
+
+                      <div className="value">
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          defaultValue={stateOption[0]}
+                          name="color"
+                          options={stateOption}
+                          onChange={(e) => setCurState(e.value)}
+                        />
+                      </div>
+                    </li>
+                    {/* ---------- VISIBLE STATUS ---------- */}
+
+                  </ul>
+                </Col>
+              </Row>
+              <Row className="actionBtnBox">
+                <button
+                  className="whiteBtn"
+                  onClick={() => {
+                    setLinktitle("");
+                    setLinkurl("http://");
+                    setToggleAddLink(false);
+                  }}
+                  variant="outline-secondary"
+                >
+                  취소
+                </button>
+                <button
+                  className="grayBtn"
+                  onClick={()=>{submitLinkitem()}}
+                  variant="secondary"
+                >
+                  확인
+                </button>
+              </Row>
+            </Container>
+          </Modal.Body>
+        </Modal>
+
+{/* ---------- ADD LINK Tab MODAL END ---------- */}
       </Container>
     </CurationBox>
   );
