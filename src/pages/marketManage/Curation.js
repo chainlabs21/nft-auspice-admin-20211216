@@ -14,7 +14,7 @@ import {
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
-import moment from 'moment';
+import moment from "moment";
 
 import Select from "react-select";
 import { AiOutlinePlusSquare } from "react-icons/ai";
@@ -52,8 +52,8 @@ const Curation = () => {
     { title: "수정", hasCallback: true },
     { title: "상태", convertInt: ["숨김", "공개"] },
     { title: "큐레이션 명" },
-    { title: "카테고리 코드" },
-    { title: "카테고리 타입" },
+    { title: "아이템 수" },
+    { title: "카테고리 타입", isCategoryType: true },
   ];
 
   const itemKey = [
@@ -97,34 +97,31 @@ const Curation = () => {
   const selectItemsList = [
     { title: "itemID", search: true },
     { title: "등록 일시", isDate: true },
-    { title: "아이템", isImage:true},
-    { title: "아이템 명",search: true },
-    { title: "소유자", search: true},
-    { title: "토큰"},
-    { title: "가격"},
-    { title: "선택", isButton:true},
+    { title: "아이템", isImage: true },
+    { title: "아이템 명", search: true },
+    { title: "소유자", search: true },
+    { title: "토큰" },
+    { title: "가격" },
+    { title: "선택", isButton: true },
   ];
   const selectUsersList = [
     { title: "등록 일시", isDate: true },
-    { title: "프로필 이미지", isImage:true},
+    { title: "프로필 이미지", isImage: true },
     { title: "닉네임", search: true },
-    { title: "지갑 주소"},
-    { title: "선택", isButton:true},
+    { title: "지갑 주소" },
+    { title: "선택", isButton: true },
   ];
 
-
-
-  const [showSelectItems, setShowSelectItems]=useState([]);
-  const [DEFAULT_SIZE, setDEFAULT_SIZE] = useState(20)
-  const [users, setUsers] = useState([])
+  const [showSelectItems, setShowSelectItems] = useState([]);
+  const [DEFAULT_SIZE, setDEFAULT_SIZE] = useState(20);
+  const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
-  const [orderKey, setOrderKey]=useState('id');
-  const [orderVal, setOrderVal]=useState('DESC');
-  const [search, setSearch]=useState('');
-  const [filterVal, setFilterVal]=useState();
+  const [orderKey, setOrderKey] = useState("id");
+  const [orderVal, setOrderVal] = useState("DESC");
+  const [search, setSearch] = useState("");
+  const [filterVal, setFilterVal] = useState();
 
-
-  const [count, setCount]=useState(0);
+  const [count, setCount] = useState(0);
   const [toggleRegister, setToggleRegister] = useState(false);
   const [toggleSettings, setToggleSettings] = useState(false);
   const [dataIndex, setDataIndex] = useState(0);
@@ -132,7 +129,7 @@ const Curation = () => {
   const [selectedCat, setSelectedCat] = useState();
   const [selectedCode, setSelectedCode] = useState(0);
   const [itemKeyList, setItemKeyList] = useState(itemKey);
-  const [searchItemKeyList, setSearchItemKeyList] = useState(selectItemsList)
+  const [searchItemKeyList, setSearchItemKeyList] = useState(selectItemsList);
 
   const [itemsList, setItemsList] = useState({});
 
@@ -147,97 +144,139 @@ const Curation = () => {
   const [typeState, setTypeState] = useState(0);
 
   const [toggleItemRegister, setToggleItemRegister] = useState(false);
-  const [toggleAddLink, setToggleAddLink] = useState(false)
+  const [toggleAddLink, setToggleAddLink] = useState(false);
 
   //------------------------------------------
-  const [linktitle, setLinktitle]=useState("");
-  const [linkurl, setLinkurl]=useState("http://")
-  const [linkdesc, setLinkdesc]=useState("")
+  const [linktitle, setLinktitle] = useState("");
+  const [linkurl, setLinkurl] = useState("http://");
+  const [linkdesc, setLinkdesc] = useState("");
+  ///////////////////////
+  const [toggleEditCategory, setToggleEditCategory] = useState(false);
 
-
-  //
+  //-----ITEM CHANGE--------
+  const [toggleItemChange, setToggleItemChange] = useState(false);
+  const [toggleUserChange, setToggleUserChange] = useState(false)
 
   const [toggleSearchItem, setToggleSearchItem] = useState(false);
 
+  useEffect(()=>{
+    if(toggleItemChange){
 
+    }
+  },[toggleItemChange])
 
   //On Item Selection
-  async function onShowSelectItems(){
+  async function onShowSelectItems() {
+    if (selectedCat[1] == 0 || selectedCat[1] == 1) {
+      const { data } = await axios.get(
+        "http://itemverse1.net:32287/admin/search/items"
+      );
+      if (data) {
+        setShowSelectItems([]);
+        const { list } = data;
+        //console.log(list)
+        list.map((item, index) => {
+          const fields = {
+            itemid: item.itemid,
+            regDate: moment(item.createdat).format("YYYY-MM-DD"),
+            image: item.url,
+            name: item.titlename,
+            owner: item.author_info?.nickname,
+            token: item.priceunit,
+            price: "10",
+            button: item.itemid,
+            id: item.itemid,
+            ownerAddress: item.author_info?.username,
+          };
+          setShowSelectItems((prevState) => [...prevState, fields]);
+        });
+      }
+    } else if (selectedCat[1] == 2) {
+      //console.log("HELLLO")
+      const { data } = await axios.get(
+        "http://itemverse1.net:32287/admin/search/users"
+      );
+      //console.log(data)
+      if (data) {
+        setShowSelectItems([]);
+        const { list } = data;
+        console.log(list);
+        list.map((item, index) => {
+          const fields = {
+            regDate: moment(item.createdat).format("YYYY-MM-DD"),
+            image: item.profileimageurl,
+            name: item.nickname,
+            username: item.username,
+            button: item.username,
+            ownerAddress: item.author_info?.username,
+          };
+          setShowSelectItems((prevState) => [...prevState, fields]);
+        });
+      }
+    }
+  }
+
+  async function onDeleteCategory(){
+    await axios
+      .post(`${API.DELETE_ITEMS}/category`, null, {
+        params: {
+          id:dataIndex,
+        },
+      })
+      .then((resp) => {
+        console.log(resp);
+        console.log("변경완료");
+        setCategoryName("");
+        setTypeState(0)
+        setCurState(1)
+        setToggleEditCategory(false);
+        getCategory();
+      });
+  }
+
+  async function onEditCategory(){
+    await axios.post(`${API.SET_ITEM}/category`, null, {
+      params: {
+        id      : dataIndex,
+        visible : curState,
+        name    : categoryName,
+        type    : typeState,
+      },
+    }).then((resp)=>{
+      console.log(resp)
+      setCategoryName("");
+    setTypeState(0)
+    setToggleEditCategory(false);
+    getCategory();
+    })
     
-    if (selectedCat[1]==0 || selectedCat[1]==1){
-    const {data} = await axios.get('http://itemverse1.net:32287/admin/search/items')
-    if(data) {
-      setShowSelectItems([])
-      const {list} = data
-      //console.log(list)
-      list.map((item, index) => {
-        const fields = {
-          itemid: item.itemid,
-          regDate: moment(item.createdat).format('YYYY-MM-DD'),
-          image: item.url,
-          name: item.titlename,
-          owner: item.author_info?.nickname,
-          token: item.priceunit,
-          price: '10',
-          button: item.itemid,
-          id: item.itemid,
-          ownerAddress: item.author_info?.username
-        }
-        setShowSelectItems(prevState => [...prevState, fields])
-      })
-    }
-  }else if (selectedCat[1]==2){
-    //console.log("HELLLO")
-    const {data} = await axios.get('http://itemverse1.net:32287/admin/search/users')
-    //console.log(data)
-    if(data) {
-      setShowSelectItems([])
-      const {list} = data
-      console.log(list)
-      list.map((item, index) => {
-        const fields = {
-          regDate: moment(item.createdat).format('YYYY-MM-DD'),
-          image: item.profileimageurl,
-          name: item.nickname,
-          username: item.username,
-          button: item.username,
-          ownerAddress: item.author_info?.username
-        }
-        setShowSelectItems(prevState => [...prevState, fields])
-      })
-    }
+    
   }
 
-
-
-  }
-
-  function onAddToCategory(e){
-    console.log(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/${e}`)
+  function onInsertToCategory(e) {
+    console.log(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/${e}`);
     axios
       .post(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/${e}`)
-      .then((resp)=>{
-        console.log(resp)
-        if(resp.data.status=="ERR"){
-          alert('이미 등록된 아이템 입니다.')
+      .then((resp) => {
+        console.log(resp);
+        if (resp.data.status == "ERR") {
+          alert("이미 등록된 아이템 입니다.");
         }
-      })
-
+      });
   }
 
-  function submitLinkitem(){
+  function submitLinkitem() {
     axios
-    .post(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/link`,null,{params:{title: linktitle, url: linkurl, description: linkdesc}})
-    .then((resp)=>{
-      console.log(resp)
-      if(resp.data.status=="ERR"){
-        alert('뭐가 안되긴 했음')
-        
-      }
-    })
+      .post(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/link`, null, {
+        params: { title: linktitle, url: linkurl, description: linkdesc },
+      })
+      .then((resp) => {
+        console.log(resp);
+        if (resp.data.status == "ERR") {
+          alert("뭐가 안되긴 했음");
+        }
+      });
   }
-
-
 
   function onItemOrderSwap(base, target) {
     console.log(`${API.SWAP_ITEMS}/${selectedCat[0]}/${base}/${target}`);
@@ -246,6 +285,7 @@ const Curation = () => {
       .then(async (resp) => {
         console.log(resp);
         console.log("변경완료");
+
         await getItemsList();
       });
   }
@@ -262,7 +302,8 @@ const Curation = () => {
       .then(async (resp) => {
         console.log(resp);
         console.log("변경완료");
-        //await getItemsList()
+        await setItemsData([]);
+        getItemsList();
       });
   }
 
@@ -286,11 +327,13 @@ const Curation = () => {
 
   useEffect(() => {
     setItemsList({});
-    setShowSelectItems([])
-    setToggleSearchItem(false)
+    setShowSelectItems([]);
+    setToggleSearchItem(false);
+    
   }, [selectedCat]);
 
   function getItemsList() {
+    setItemsData([]);
     axios
       .get(
         `${API.GET_FEATURED}${TYPESTR[selectedCat[1]]}/code/${selectedCat[0]}`
@@ -298,14 +341,14 @@ const Curation = () => {
       .then((resp) => {
         console.log(resp.data.list);
         const itemList = resp.data.list;
-        if (selectedCat[1] == 0 || selectedCat[1] == 1) {
+        console.log(selectedCat);
+        if (selectedCat[1] == 0) {
           itemList.map((v, i) => {
             console.log(v);
             const setting = {
               icon: <TiSpanner />,
               callback: (i) => {
-                setToggleSettings(true);
-                //setToggleItemRegister(true)
+                setToggleItemChange(!toggleItemChange)
               },
             };
             const item = {
@@ -315,10 +358,35 @@ const Curation = () => {
               name: v.item.titlename,
               status: v.active,
               edit: setting,
-              cat: selectedCat[0],
+              cat: v.item.categorystr,
               token: "KLAY",
               price: "10.0000",
             };
+            console.log(item);
+            setItemsData((pre) => [...pre, item]);
+          });
+        }
+        if (selectedCat[1] == 1) {
+          itemList.map((v, i) => {
+            console.log(v);
+            const setting = {
+              icon: <TiSpanner />,
+              callback: (i) => {
+                setToggleItemChange(!toggleItemChange)
+              },
+            };
+            const item = {
+              sel: v.id,
+              no: v.displayorder,
+              url: v.item.url,
+              name: v.item.titlename,
+              status: v.active,
+              edit: setting,
+              cat: v.item.categorystr,
+              token: "KLAY",
+              price: "10.0000",
+            };
+            console.log(item);
             setItemsData((pre) => [...pre, item]);
           });
         } else if (selectedCat[1] == 2) {
@@ -327,7 +395,7 @@ const Curation = () => {
             const setting = {
               icon: <TiSpanner />,
               callback: (i) => {
-                setToggleSettings(true);
+                setToggleUserChange(!toggleUserChange);
               },
             };
             const item = {
@@ -347,6 +415,7 @@ const Curation = () => {
             const setting = {
               icon: <TiSpanner />,
               callback: (i) => {
+                //LINK EDIT
                 setToggleSettings(true);
                 setDataIndex(v.id);
                 console.log(v.id);
@@ -380,56 +449,75 @@ const Curation = () => {
     setItemsData([]);
     if (selectedCat[1] == 0) {
       setItemKeyList(itemKey);
-      setSearchItemKeyList(selectItemsList)
+      setSearchItemKeyList(selectItemsList);
     }
     if (selectedCat[1] == 1) {
       setItemKeyList(itemKey);
-      setSearchItemKeyList(selectItemsList)
+      setSearchItemKeyList(selectItemsList);
     }
     if (selectedCat[1] == 2) {
       setItemKeyList(userKey);
-      setSearchItemKeyList(selectUsersList)
+      setSearchItemKeyList(selectUsersList);
     }
     if (selectedCat[1] == 3) {
       setItemKeyList(linkKey);
-      
     }
     getItemsList();
   }, [selectedCat]);
 
-  useEffect(() => {
+  useEffect(()=>{
+
+    console.log(toggleEditCategory)
+
+  },[toggleEditCategory])
+  //카테고리 목록
+
+  function getCategory(){
     setTableData([]);
-    axios.get(API.GET_FEATURED).then((resp) => {
+    axios.get(`http://itemverse1.net:32287/admin/search/maincategory`).then((resp) => {
       const MainCategory = resp.data.list;
       //setTableData(MainCategory)
       MainCategory.map((v, i) => {
-        console.log(v);
+        console.log(v)
+        //console.log(v);
         const setting = {
           icon: <TiSpanner />,
           callback: (i) => {
-            setToggleSettings(true);
+            setCategoryName(v.name);
+            setCurState(v.visible);
+            setTypeState(v.type);
+            setDataIndex(v.id);
+            setToggleEditCategory(true);
           },
         };
         const information = {
-          no: v.displayorder,
+          no      : v.displayorder,
           edit: setting,
           visible: v.visible,
           name: v.name,
-          code: v.code,
-          type: v.type,
+          code: v["itemsss"].length,
+          type: v.type?v.type:0,
+          size: v.code,
         };
         setTableData((pre) => [...pre, information]);
       });
     });
+  }
+  useEffect(() => {
+    getCategory();
   }, []);
 
-  const submitRegister = () => {
+  const submitRegister = async () => {
     //curState      => visible
     //categoryName] => categoryName
     //typeState     => TYPE
-
-    alert(categoryName + " :::::::: " + curState);
-
+    await axios.post(`${API.SET_ITEM}/category`, null, {
+      params: {
+        visible: curState,
+        name: categoryName,
+        type: typeState,
+      },
+    });
     setCategoryName("");
     setToggleRegister(false);
   };
@@ -467,7 +555,9 @@ const Curation = () => {
           </Col>
         </Row>
         <Row>
-          <PageTitle title={selectedCat?(selectedCat[2]):"선택된 항목 없음"} />
+          <PageTitle
+            title={selectedCat ? selectedCat[2] : "선택된 항목 없음"}
+          />
         </Row>
 
         <Row>
@@ -475,13 +565,14 @@ const Curation = () => {
             <Button
               variant="secondary"
               onClick={async () => {
-                if(selectedCat){
-                  if(selectedCat[1]==3){
-                    setToggleAddLink(true); return;
+                if (selectedCat) {
+                  if (selectedCat[1] == 3) {
+                    setToggleAddLink(true);
+                    return;
                   }
-                await setToggleSearchItem(!toggleSearchItem);
-                await onShowSelectItems();
-                myRef.current.scrollIntoView();
+                  await setToggleSearchItem(!toggleSearchItem);
+                  await onShowSelectItems();
+                  myRef.current.scrollIntoView();
                 }
               }}
             >
@@ -510,7 +601,7 @@ const Curation = () => {
               wrapName="tableHasNo"
               keyList={itemKeyList}
               tableData={itemsData}
-              refresh
+              clean
               selectItem={(e) => {
                 setItemsList({ ...itemsList, ...e });
                 // setSelectedCat(e);
@@ -535,7 +626,9 @@ const Curation = () => {
                 setItemsList({ ...itemsList, ...e });
                 // setSelectedCat(e);
               }}
-              selectCreateItem={(e)=>{onAddToCategory(e)}}//onAddToCategory
+              selectCreateItem={(e) => {
+                onInsertToCategory(e);
+              }} //onAddToCategory
               onSelect={(e) => {}}
             />
           </Col>
@@ -544,7 +637,7 @@ const Curation = () => {
         {/* SELECT ITEM PAGE */}
         {/* SELECT ITEM PAGE */}
 
-{/* ---------- ADD Curation Tab MODAL START---------- */}
+        {/* ---------- ADD CATEGORY MODAL START---------- */}
         <Modal className="inpuListPopup" show={toggleRegister} centered>
           <Modal.Header>카테고리 등록</Modal.Header>
           <Modal.Body>
@@ -573,7 +666,7 @@ const Curation = () => {
                         <Select
                           className="basic-single"
                           classNamePrefix="select"
-                          defaultValue={stateOption[0]}
+                          defaultValue={stateOption[curState]}
                           name="color"
                           options={stateOption}
                           onChange={(e) => setCurState(e.value)}
@@ -590,7 +683,7 @@ const Curation = () => {
                         <Select
                           className="basic-single"
                           classNamePrefix="select"
-                          defaultValue={typeOption[0]}
+                          defaultValue={typeOption[typeState]}
                           name="color"
                           options={typeOption}
                           onChange={(e) => setTypeState(e.value)}
@@ -606,6 +699,7 @@ const Curation = () => {
                   className="whiteBtn"
                   onClick={() => {
                     setCategoryName("");
+                    setTypeState(0);
                     setToggleRegister(false);
                   }}
                   variant="outline-secondary"
@@ -624,9 +718,9 @@ const Curation = () => {
           </Modal.Body>
         </Modal>
 
-{/* ---------- ADD Curation Tab MODAL END ---------- */}
+        {/* ---------- ADD CATEGORY MODAL END ---------- */}
 
-{/* ---------- ADD ITEM Register Tab MODAL START---------- */}
+        {/* ---------- ADD ITEM Register Tab MODAL START---------- */}
         <Modal className="inpuListPopup" show={toggleItemRegister} centered>
           <Modal.Header>아이템 등록</Modal.Header>
           <Modal.Body>
@@ -673,7 +767,7 @@ const Curation = () => {
                         <Select
                           className="basic-single"
                           classNamePrefix="select"
-                          defaultValue={typeOption[0]}
+                          defaultValue={typeOption[typeState]}
                           name="color"
                           options={typeOption}
                           onChange={(e) => setTypeState(e.value)}
@@ -689,6 +783,7 @@ const Curation = () => {
                   className="whiteBtn"
                   onClick={() => {
                     setCategoryName("");
+                    setTypeState(0);
                     setToggleItemRegister(false);
                   }}
                   variant="outline-secondary"
@@ -707,9 +802,9 @@ const Curation = () => {
           </Modal.Body>
         </Modal>
 
-{/* ---------- ADD ITEM Register Tab MODAL END ---------- */}
+        {/* ---------- ADD ITEM Register Tab MODAL END ---------- */}
 
-{/* ---------- ADD LINK Tab MODAL START---------- */}
+        {/* ---------- ADD LINK Tab MODAL START---------- */}
         <Modal className="inpuListPopup" show={toggleAddLink} centered>
           <Modal.Header>링크 등록</Modal.Header>
           <Modal.Body>
@@ -747,7 +842,7 @@ const Curation = () => {
                       <div className="key">링크 설명 :</div>
 
                       <div className="value">
-                        <Form.Control 
+                        <Form.Control
                           as="textarea"
                           rows={2}
                           onChange={(e) => setLinkdesc(e.target.value)}
@@ -765,7 +860,7 @@ const Curation = () => {
                         <Select
                           className="basic-single"
                           classNamePrefix="select"
-                          defaultValue={stateOption[0]}
+                          defaultValue={stateOption[curState]}
                           name="color"
                           options={stateOption}
                           onChange={(e) => setCurState(e.value)}
@@ -773,7 +868,6 @@ const Curation = () => {
                       </div>
                     </li>
                     {/* ---------- VISIBLE STATUS ---------- */}
-
                   </ul>
                 </Col>
               </Row>
@@ -781,6 +875,7 @@ const Curation = () => {
                 <button
                   className="whiteBtn"
                   onClick={() => {
+                    setTypeState(0);
                     setLinktitle("");
                     setLinkurl("http://");
                     setToggleAddLink(false);
@@ -791,7 +886,9 @@ const Curation = () => {
                 </button>
                 <button
                   className="grayBtn"
-                  onClick={()=>{submitLinkitem()}}
+                  onClick={() => {
+                    submitLinkitem();
+                  }}
                   variant="secondary"
                 >
                   확인
@@ -801,7 +898,104 @@ const Curation = () => {
           </Modal.Body>
         </Modal>
 
-{/* ---------- ADD LINK Tab MODAL END ---------- */}
+        {/* ---------- ADD LINK Tab MODAL END ---------- */}
+
+        {/* ---------- EDIT CATEGORY MODAL START---------- */}
+        <Modal className="inpuListPopup" show={toggleEditCategory} centered>
+          <Modal.Header>카테고리 수정</Modal.Header>
+          <Modal.Body>
+            <Container>
+              <Row className="inputBox">
+                <Col>
+                  <ul className="inputList">
+                    {/* ---------- CATEGORY NAME ---------- */}
+                    <li>
+                      <div className="key">카테고리 이름 :</div>
+
+                      <div className="value">
+                        <Form.Control
+                          onChange={(e) => setCategoryName(e.target.value)}
+                          value={categoryName}
+                        ></Form.Control>
+                      </div>
+                    </li>
+                    {/* ---------- CATEGORY NAME ---------- */}
+
+                    {/* ---------- VISIBLE STATUS ---------- */}
+                    <li>
+                      <div className="key">상태 :</div>
+
+                      <div className="value">
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          defaultValue={stateOption[curState]}
+                          name="color"
+                          options={stateOption}
+                          onChange={(e) => setCurState(e.value)}
+                        />
+                      </div>
+                    </li>
+                    {/* ---------- VISIBLE STATUS ---------- */}
+
+                    {/* ---------- TYPE STATUS ---------- */}
+                    <li>
+                      <div className="key">형식 :</div>
+
+                      <div className="value">
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          defaultValue={typeOption[typeState]}
+                          name="color"
+                          options={typeOption}
+                          onChange={(e) => setTypeState(e.value)}
+                        />
+                      </div>
+                    </li>
+                    {/* ---------- TYPE STATUS ---------- */}
+                  </ul>
+                </Col>
+              </Row>
+              <Row className="actionBtnBox">
+                <button
+                  variant="danger"
+                  className="btn-danger"
+                  onClick={() => {
+                    // setCategoryName("");
+                    // setTypeState(0);
+                    // setToggleEditCategory(false);
+                    onDeleteCategory();
+                  }}
+                >
+                  삭제
+                </button>
+                <button
+                  className="whiteBtn"
+                  onClick={() => {
+                    setCategoryName("");
+                    setTypeState(0);
+                    setToggleEditCategory(false);
+                  }}
+                  variant="outline-secondary"
+                >
+                  취소
+                </button>
+                <button
+                  className="grayBtn"
+                  onClick={() => {
+                    onEditCategory();
+                  }}
+                  variant="secondary"
+                >
+                  확인
+                </button>
+              </Row>
+            </Container>
+          </Modal.Body>
+        </Modal>
+
+        {/* ---------- EDIT CATEGORY Tab MODAL END ---------- */}
       </Container>
     </CurationBox>
   );

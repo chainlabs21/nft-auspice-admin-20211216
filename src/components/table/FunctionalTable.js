@@ -68,6 +68,13 @@ const FunctionalTable = ({
 
   passtheCount(showCount);
 
+  const typeOption = [
+    { value: 0, label: "큰 아이템 목록" },
+    { value: 1, label: "작은 아이템 목록" },
+    { value: 2, label: "유저 목록" },
+    { value: 3, label: "링크 목록" },
+  ];
+
   const handleRefresh = () => {
     //dispatch
     refreshCallback();
@@ -523,7 +530,7 @@ const FunctionalTable = ({
                     )}
                     <tbody>
                       {dataArr.map((data, i) => (
-                        <tr key={i} onClick={()=>{onSelect([data[4], data[5], data[3]])}}>
+                        <tr key={i} onClick={()=>{onSelect([data[6], data[5], data[3]])}}>
                           {data.map((v, j) => {
                             if (refinedKeyList[j] === undefined) {
                               return null;
@@ -566,6 +573,8 @@ const FunctionalTable = ({
                                 <td key={j} style={{
                                   textAlign: 'center', 
                                   verticalAlign: 'middle'
+                                  , fontSize: '24px'
+                                  , cursor: 'pointer'
                                 }} onClick={() => v.callback(i)}>
                                   {v.icon}
                                 </td>
@@ -578,6 +587,16 @@ const FunctionalTable = ({
                                   verticalAlign: 'middle'
                                 }}>
                                   {refinedKeyList[j].convertInt[v]}
+                                </td>
+                              );
+                            }
+                            if (refinedKeyList[j].isCategoryType) {
+                              return (
+                                <td key={j} style={{
+                                  textAlign: 'center', 
+                                  verticalAlign: 'middle'
+                                }}>
+                                  {typeOption[v].label}
                                 </td>
                               );
                             }
