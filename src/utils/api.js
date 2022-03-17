@@ -1,4 +1,4 @@
-const apiServer = "http://itemverse1.net:32287";
+const apiServer = process.env.REACT_APP_API_SERVER//"http://itemverse1.net:32287";
 export const API = {
   GET_USERS: (size, off=0) => `${apiServer}/queries/rows/users/active/1/${off}/${size}/id/DESC?userdetail=1`,
   GET_ITEMS: (size, off=0) => `${apiServer}/queries/rows/items/active/1/${off}/${size}/id/DESC?userdetail=1`,
