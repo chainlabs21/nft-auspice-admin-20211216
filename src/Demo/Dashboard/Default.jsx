@@ -184,7 +184,7 @@ const Default = () => {
                     </Row>
                 </Col>
 
-                <Col xl={6} md={12}>
+                {/* <Col xl={6} md={12}>
                     <Card className="table-card">
                         <Card.Header>
                             <h5>Projects</h5>
@@ -668,7 +668,7 @@ const Default = () => {
                         </Card.Body>
                         <button className="btn btn-success btn-block">Download Overall Report</button>
                     </Card>
-                </Col>
+                </Col> */}
             </Row>
         </>);
 };

@@ -75,7 +75,7 @@ const chartData = {
         },
         {
           id: "MintingInspection",
-          title: "MintingInspection",
+          title: "신고접수",
           type: "item",
           url: "/mintingInspection",
           level: 0,

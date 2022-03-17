@@ -18,6 +18,9 @@ import { SET_ITEM_STATE } from "../../store/itemReducer";
 import { useDispatch } from "react-redux";
 import PageTitle from "../../components/PageTitle";
 import { ITEM_DETAIL_URL } from "../../config/urlDefine";
+import axios from 'axios';
+import { API } from "../../utils/api";
+import moment from 'moment';
 
 const keyList = [
   { title: "No" },
@@ -40,6 +43,7 @@ const keyList = [
   { title: "Creator" },
   { title: "Creator address", search: true },
 ];
+
 const keyToValue = [
   "no",
   "regDate",
@@ -51,11 +55,21 @@ const keyToValue = [
   "creator",
   "creatorAddress",
 ];
+
+const CategoryKeyList=[
+  { title: "No" },
+  { title: "등록일", isDate: true  },
+  { title: "상태", convertInt: ['공개', '숨김']},
+  { title: "수정", hasCallback: true },
+  { title: "신고 카테고리 명" },
+]
+
 const stateOption = [
   { value: 0, label: "정상" },
   { value: 1, label: "검수중" },
   { value: 2, label: "정책 위반" },
 ];
+
 
 const MintingInspection = () => {
   const { itemList, todayRegister, totalRegister, mintingWait, totalMinting } =
@@ -63,7 +77,8 @@ const MintingInspection = () => {
   const [tableData, setTableData] = useState([]);
   const [itemToggle, setItemToggle] = useState(false);
   const [dataIndex, setDataIndex] = useState(0);
-  const [itemState, setItemState] = useState(0);
+  const [categoryData, setCategoryData] = useState([]);
+  const [toggleRegister, setToggleRegister] = useState(false)
   const dispatch = useDispatch();
   const handleSubmit = () => {
     //dispatch
@@ -84,43 +99,63 @@ const MintingInspection = () => {
     setTableData(temp);
   }, [itemList]);
 
+  useEffect(()=>{
+    setCategoryData([])
+    axios.get(`${process.env.REACT_APP_API_SERVER}/queries/reportcategory`)
+    .then((resp)=>{
+      let {data} = resp;
+      if(data){
+        let {list} = data;
+
+        list.map((v, i)=>{
+          const callbackData = {
+            icon: <TiSpanner style={{ fontSize: "24px" }} />,
+            callback: (index) => {
+              setItemToggle(true);
+              setDataIndex(i);
+            },
+          }
+          const item={
+            id: v.id,
+            createdat: moment(v.createdat).format("YYYY-MM-DD"),
+            visible: v.visible,
+            setting: callbackData,
+            name: v.name,
+            code: v.code
+          }
+          setCategoryData(pre=>[...pre, item])
+        })
+      }
+    })
+  },[])
+
   return (
     <Container fluid>
       <Row>
         <Col>
-          <PageTitle title={"Minting Inspection"} margin={5} />
+          <PageTitle title={"신고 카테고리"} margin={5} />
         </Col>
       </Row>
       <Row>
-        <Col>
-          <Card>
-            <Card.Body>
-              <Table bordered style={{ textAlign: "center" }}>
-                <thead>
-                  <tr style={{ textAlign: "center" }}>
-                    <th colSpan={2}>ITEM</th>
-                    <th colSpan={2}>Minting</th>
-                  </tr>
-                  <tr>
-                    <th>금일 등록수</th>
-                    <th>누적 등록수</th>
-                    <th>대기</th>
-                    <th>누적 Minting 수</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{todayRegister}</td>
-                    <td>{totalRegister}</td>
-                    <td>{mintingWait}</td>
-                    <td>{totalMinting}</td>
-                  </tr>
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+          <Col style={{ paddingBottom: "30px" }}>
+            <Button variant="secondary" onClick={() => setToggleRegister(true)}>
+              신규 등록
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <FunctionalTable
+              wrapName="tableHasNo"
+              keyList={CategoryKeyList}
+              tableData={categoryData}
+              clean
+              onSelect={(e) => {
+                //setSelectedCat(e);
+              }}
+            />
+          </Col>
+        </Row>
       <Row>
         <Col>
           <FunctionalTable
