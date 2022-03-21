@@ -24,24 +24,25 @@ import moment from 'moment';
 
 const keyList = [
   { title: "No" },
-  { title: "등록 일시" },
+  { title: "Item", Videoable:true, },
+  {title: 'Item name'},
   {
     title: "상태",
     filter: true,
     convertInt: ["정상", "검수중", "정책 위반"],
   },
-  { title: "숨김", convertInt: ["노출", "숨김"] },
   { title: "검수", hasCallback: true },
-  { title: "Item", hasChildren: true, numChildren: 2 },
+  { title: "신고자", hasChildren: true, numChildren: 2 },
   {
-    title: "name",
+    title: "닉네임",
     isChildren: true,
     search: true,
-    href: ITEM_DETAIL_URL + "?itemId=0",
   },
-  { title: "ID", isChildren: true },
-  { title: "Creator" },
-  { title: "Creator address", search: true },
+  { title: "지갑 주소", isChildren: true },
+  { title: "아이템 토큰" },
+  { title: "아이템 가격" },
+  { title: "신고 카테고리" },
+  { title: "내용" },
 ];
 
 const keyToValue = [
@@ -59,7 +60,7 @@ const keyToValue = [
 const CategoryKeyList=[
   { title: "No" },
   { title: "등록일", isDate: true  },
-  { title: "상태", convertInt: ['공개', '숨김']},
+  { title: "상태", convertInt: ['숨김', '공개']},
   { title: "수정", hasCallback: true },
   { title: "신고 카테고리 명" },
 ]
@@ -79,6 +80,7 @@ const MintingInspection = () => {
   const [dataIndex, setDataIndex] = useState(0);
   const [categoryData, setCategoryData] = useState([]);
   const [toggleRegister, setToggleRegister] = useState(false)
+  const [reportData, setReportData] = useState([])
   const dispatch = useDispatch();
   const handleSubmit = () => {
     //dispatch
@@ -101,11 +103,41 @@ const MintingInspection = () => {
 
   useEffect(()=>{
     setCategoryData([])
+    setReportData([])
     axios.get(`${process.env.REACT_APP_API_SERVER}/queries/reportcategory`)
     .then((resp)=>{
       let {data} = resp;
       if(data){
         let {list} = data;
+
+        list.map((v, i)=>{
+          if(i==0){return}
+          const callbackData = {
+            icon: <TiSpanner style={{ fontSize: "24px" }} />,
+            callback: (index) => {
+              setItemToggle(true);
+              setDataIndex(i);
+            },
+          }
+          const item={
+            id: v.id-1,
+            createdat: moment(v.createdat).format("YYYY-MM-DD"),
+            visible: v.visible,
+            setting: callbackData,
+            name: v.name,
+            code: v.code
+          }
+          setCategoryData(pre=>[...pre, item])
+        })
+      }
+    })
+
+    axios.get(`${process.env.REACT_APP_API_SERVER}/report/rows`)
+    .then((resp)=>{
+      let {data} = resp;
+      if(data){
+        let {list} = data;
+        console.log(list)
 
         list.map((v, i)=>{
           const callbackData = {
@@ -116,14 +148,21 @@ const MintingInspection = () => {
             },
           }
           const item={
-            id: v.id,
-            createdat: moment(v.createdat).format("YYYY-MM-DD"),
-            visible: v.visible,
-            setting: callbackData,
-            name: v.name,
-            code: v.code
+            id: v.id,                                               //0
+            //createdat: moment(v.createdat).format("YYYY-MM-DD"),
+            image: v.item_info.url,                                 //1
+            itemtitle: v.item_info.titlename,                       //2
+            status: v.status,                                       //3
+            setting: callbackData,                                  //4
+            reportername: v.reporter_info.nickname,                 //5
+            reporteraddr: v.reporter_info.username,                 //6
+            creator: v.item_info.priceunit,                         //7
+            price: v.item_info.pricemax,                            //8
+            category: '카테고리',                                     //9
+            description: v.description,                             //10
+            itemtype: v.item_info.typestr                           //11
           }
-          setCategoryData(pre=>[...pre, item])
+          setReportData(pre=>[...pre, item])
         })
       }
     })
@@ -161,7 +200,7 @@ const MintingInspection = () => {
           <FunctionalTable
             wrapName="mintingInspectionList tableHasNo"
             keyList={keyList}
-            tableData={tableData}
+            tableData={reportData}//tableData}
             search
             refresh
             datePicker

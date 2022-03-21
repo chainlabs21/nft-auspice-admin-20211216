@@ -567,6 +567,30 @@ const FunctionalTable = ({
                             }
                             if (refinedKeyList[j].isSecret) {
                               return null;
+                              
+                            }
+                            if (refinedKeyList[j].Videoable) {
+                              if (data[11]=='image')
+                              return (<td key={j}>
+                                
+                                <img src={v} style={{width: '128px', height:'128px', marginTop:'15px', marginBottom:'15px'}}/>
+                                </td>);
+                                else
+                                return(
+                                  <video
+                                    autoPlay
+                                    muted
+                                    loop
+                                    id="video"
+                                    className="imageBox"
+                                    //ref={video}
+                                    onClick={() => {}}
+                                    style={{width: '128px', height:'128px', marginTop:'15px', marginBottom:'15px'}}
+                                  >
+                                    <source src={v} />
+                                  </video>
+                                )
+                              
                             }
                             if (refinedKeyList[j].hasCallback) {
                               return (

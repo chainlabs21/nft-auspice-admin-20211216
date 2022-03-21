@@ -54,35 +54,23 @@ const ManageCategory = () => {
   const [active, setActive] = useState(0);
   const [sortedCategory, setSortedCategory] = useState([]);
   const [curState, setCurState] = useState(0);
+  const [selectedOrder, setSelectedOrder] = useState(-1)
   const dispatch = useDispatch();
-console.log(level)
-  const changeDisplayOrder = (index, direction) => {
-    const temp = sortedCategory;
-    if (direction === 0) {
-      if (active < sortedCategory.length) {
-        const swapTemp = temp[active + 1];
-        temp[active + 1] = temp[active];
-        temp[active] = swapTemp;
-        setActive(active + 1);
-        dispatch({
-          type: CHANGE_DISPLAY_ORDER,
-          payload: { index: dataIndex, value: 1 },
-        });
-      }
-    } else {
-      //up
-      if (active > 0) {
-        const switchTemp = temp[active - 1];
-        temp[active - 1] = temp[active];
-        temp[active] = switchTemp;
-        setActive(active - 1);
-        dispatch({
-          type: CHANGE_DISPLAY_ORDER,
-          payload: { index: dataIndex, value: -1 },
-        });
-      }
+  const changeDisplayOrder = (index,indexorder, direction) => {
+    if (direction === 0) { //down
+      console.log('아래')
+
+    } else { //up
+      console.log('위')
+
     }
-    setSortedCategory(temp);
+
+    axios.post(process.env.REACT_APP_API_SERVER+'/queries/swap/categories/group_/items/'+index+'/'+indexorder+'/'+direction)
+    .then((resp)=>{
+      console.log(resp)
+    })
+
+    //setSortedCategory(temp);
   };
 
   const submitRegister = () => {
@@ -115,19 +103,22 @@ console.log(level)
   //DB에서 카테고리 리스트 요청
   //Broken af
   useEffect(() => {
-    axios.get(API.GET_CATEGORIES(20)).then((res) => {
+    axios.get(API.GET_CATEGORIES('items')).then((res) => {
       setTableData([])
       const getCategories = res.data.list
       getCategories.map((cat, index) => {
         const settingData = {
           icon: <TiSpanner style={{ fontSize: "24px" }} />,
-          callback: (index) => {
+          callback: () => {
             setToggleSettings(true);
-            setDataIndex(index);
+            setDataIndex(cat.id);
+            setSelectedOrder(cat.displayOrder)
+            setCategoryName(cat.category)
+            setCurState(cat.visible)
           },
         };
         const information = {
-          no: index + 1,
+          no: cat.id,
           category: cat.category,
           visible: cat.visible,
           displayOrder: cat.displayOrder,
@@ -282,7 +273,7 @@ console.log(level)
                   <DropdownWrapper>
                     <DropdownButton
                       title={
-                        categoryList[dataIndex].state === 1 ? "show" : "hide"
+                        curState === 1 ? "show" : "hide"
                       }
                     >
                       <Dropdown.Item
@@ -311,7 +302,7 @@ console.log(level)
                 <div className="value">
                   <Form.Control
                     onChange={(e) => setCategoryName(e.target.value)}
-                    value={categoryList[dataIndex].name}
+                    value={categoryName}
                     type="text"
                   />
                 </div>
@@ -322,14 +313,15 @@ console.log(level)
                 </div>
                 <div className="value orderValue">
                   <ListGroup className="categoryList" as="ul">
-                    {sortedCategory.map((v, i) => {
+                    {tableData.map((v, i) => {
+                      {console.log(v)}
                       return (
                         <ListGroup.Item
                           key={i}
                           as="li"
-                          active={active === i ? true : false}
+                          active={dataIndex === v.no ? true : false}
                         >
-                          {v.name}
+                          {v.category}
                         </ListGroup.Item>
                       );
                     })}
@@ -337,13 +329,13 @@ console.log(level)
                   <div className="orderBtnBox">
                     <button
                       className="upBtn"
-                      onClick={() => changeDisplayOrder(dataIndex, 1)}
+                      onClick={() => changeDisplayOrder(dataIndex,selectedOrder, 1)}
                     >
                       <img src={I_dnPolygonGray} alt="" />
                     </button>
                     <button
                       className="dnBtn"
-                      onClick={() => changeDisplayOrder(dataIndex, 0)}
+                      onClick={() => changeDisplayOrder(dataIndex,selectedOrder, 0)}
                     >
                       <img src={I_dnPolygonGray} alt="" />
                     </button>

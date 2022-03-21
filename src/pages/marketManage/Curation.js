@@ -47,6 +47,21 @@ const MAX_ROW_LENGTH = 8;
 const Curation = () => {
   const myRef = useRef(null);
 
+  const kiloBytes = 1024;
+const megaBytes = 1024 * kiloBytes;
+const MAP_fileextension_contentype = {
+  jpg: "image",
+  jpeg: "image",
+  png: "image",
+  gif: "image",
+  svg: "image",
+  mp4: "video",
+  webm: "video",
+  mp3: "audio",
+  wav: "audio",
+  ogg: "audio",
+};
+
   const keyList = [
     { title: "큐레이션 no." },
     { title: "수정", hasCallback: true },
@@ -59,7 +74,7 @@ const Curation = () => {
   const itemKey = [
     { title: "-", isSelect: true },
     { title: "아이템 no." },
-    { title: "아이템", isImage: true },
+    { title: "아이템", Videoable: true },
     { title: "아이템 명" },
     { title: "상태", convertInt: ["숨김", "공개"] },
     { title: "수정", hasCallback: true },
@@ -97,7 +112,7 @@ const Curation = () => {
   const selectItemsList = [
     { title: "itemID", search: true },
     { title: "등록 일시", isDate: true },
-    { title: "아이템", isImage: true },
+    { title: "아이템", Videoable: true },
     { title: "아이템 명", search: true },
     { title: "소유자", search: true },
     { title: "토큰" },
@@ -150,8 +165,17 @@ const Curation = () => {
   const [linktitle, setLinktitle] = useState("");
   const [linkurl, setLinkurl] = useState("http://");
   const [linkdesc, setLinkdesc] = useState("");
+  const [linkimgurl, setLinkimgurl] = useState();
   ///////////////////////
+
+  //////FILE
+  const [fileData, setFileData] =useState();
+  const[photo, setPhoto] = useState()
   const [toggleEditCategory, setToggleEditCategory] = useState(false);
+
+
+  ////////
+  const [editLink, setEditLink] = useState(false)
 
   //-----ITEM CHANGE--------
   const [toggleItemChange, setToggleItemChange] = useState(false);
@@ -164,6 +188,71 @@ const Curation = () => {
 
     }
   },[toggleItemChange])
+
+
+
+
+
+
+  //File Upload
+
+  function onchangePhoto(file) {
+    if (!file) return;
+    const fileLength = file.length;
+    const fileDot = file.name.lastIndexOf(".");
+    const fileType = file.name.substring(fileDot + 1, fileLength).toLowerCase();
+    if(MAP_fileextension_contentype[fileType]=='image'){
+    //setPhoto(file.name);
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = function () {
+      setPhoto(reader.result);
+    };
+  }
+  }
+
+  const fileUpload = async (file) => {
+    if (!file) {
+      submitLinkitem()
+      return;
+    }
+    
+    const fileLength = file.length;
+    const fileDot = file.name.lastIndexOf(".");
+    const fileType = file.name.substring(fileDot + 1, fileLength).toLowerCase();
+
+    if(MAP_fileextension_contentype[fileType]!='image'){  console.log('이미지 파일이 아닙니다.');return;}
+    let filesize = file.size;
+    if (file && filesize > 0) {
+      try {
+        if (filesize <= 40 * megaBytes) {
+          let formData = new FormData();
+          formData.append("file", file);
+          formData.append("filename", file.name);
+          const resp = await axios.post(`http://itemverse1.net:32287/curation/upload/file/curation`, formData);
+          let { status, payload, respdata } = resp.data;
+          if (status == "OK") {
+            console.log(resp.data)
+            submitLinkitem(resp.data.payload.url)
+          }
+        } else {
+          console.log('파일 사이즈가 큽니다.')
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+
+
+
+
+
+
+
 
   //On Item Selection
   async function onShowSelectItems() {
@@ -234,6 +323,24 @@ const Curation = () => {
       });
   }
 
+  const submitRegister = async () => {
+    //curState      => visible
+    //categoryName] => categoryName
+    //typeState     => TYPE
+    await axios.post(`${API.SET_ITEM}/category`, null, {
+      params: {
+        visible: curState,
+        name: categoryName,
+        type: typeState,
+      },
+    }).then((resp)=>{
+      console.log(resp);
+      getCategory()
+    });
+    setCategoryName("");
+    setToggleRegister(false);
+  };
+
   async function onEditCategory(){
     await axios.post(`${API.SET_ITEM}/category`, null, {
       params: {
@@ -254,10 +361,11 @@ const Curation = () => {
   }
 
   function onInsertToCategory(e) {
-    console.log(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/${e}`);
+    console.log(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/${e}`);//${API.SET_ITEM}
     axios
       .post(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/${e}`)
       .then((resp) => {
+        getItemsList();
         console.log(resp);
         if (resp.data.status == "ERR") {
           alert("이미 등록된 아이템 입니다.");
@@ -265,13 +373,23 @@ const Curation = () => {
       });
   }
 
-  function submitLinkitem() {
+  async function submitLinkitem(imgurl) {
+    let params={}
+    if (editLink){
+      params={title: linktitle, url: linkurl, description: linkdesc, imgurl:imgurl, id: dataIndex}
+    }else{
+      params={title: linktitle, url: linkurl, description: linkdesc, imgurl:imgurl}
+    }
     axios
       .post(`${API.SET_ITEM}/${selectedCat[1]}/${selectedCat[0]}/link`, null, {
-        params: { title: linktitle, url: linkurl, description: linkdesc },
+        params: params,
       })
       .then((resp) => {
         console.log(resp);
+        setEditLink(false)
+        setDataIndex(0)
+        setFileData()
+        setToggleAddLink(false)
         if (resp.data.status == "ERR") {
           alert("뭐가 안되긴 했음");
         }
@@ -290,21 +408,19 @@ const Curation = () => {
       });
   }
 
-  async function onItemDelete() {
+  function onItemDelete() {
     console.log(`${API.DELETE_ITEMS}/${selectedCat[0]}/`);
     console.log(selectedItems);
-    await axios
+    axios
       .post(`${API.DELETE_ITEMS}/${selectedCat[0]}`, null, {
         params: {
           selectedItems,
         },
-      })
-      .then(async (resp) => {
-        console.log(resp);
-        console.log("변경완료");
-        await setItemsData([]);
+      }).then((resp)=>{
+        console.log(resp)
         getItemsList();
-      });
+      })
+      
   }
 
   //GET SELECTED ITEMS
@@ -401,8 +517,8 @@ const Curation = () => {
             const item = {
               sel: v.id,
               no: v.displayorder,
-              url: v.user.profileimageurl,
-              name: v.user.nickname,
+              url: v.user?.profileimageurl,
+              name: v.user?.nickname,
               username: v.username,
               edit: setting,
               price: "10.0000",
@@ -418,6 +534,12 @@ const Curation = () => {
                 //LINK EDIT
                 setToggleSettings(true);
                 setDataIndex(v.id);
+                setLinktitle(v.title)
+                setLinkurl(v.url)
+                setLinkdesc(v.description)
+                setCurState(v.active)
+                setEditLink(true)
+                setToggleAddLink(true)
                 console.log(v.id);
               },
             };
@@ -425,7 +547,7 @@ const Curation = () => {
               sel: v.id,
               no: v.displayorder,
               createdat: v.createdat,
-              name: v.url,
+              name: v.imgurl,
               status: v.active,
               edit: setting,
               title: v.title,
@@ -507,20 +629,7 @@ const Curation = () => {
     getCategory();
   }, []);
 
-  const submitRegister = async () => {
-    //curState      => visible
-    //categoryName] => categoryName
-    //typeState     => TYPE
-    await axios.post(`${API.SET_ITEM}/category`, null, {
-      params: {
-        visible: curState,
-        name: categoryName,
-        type: typeState,
-      },
-    });
-    setCategoryName("");
-    setToggleRegister(false);
-  };
+
 
   const submitItemRegister = () => {
     setToggleItemRegister(false);
@@ -804,17 +913,28 @@ const Curation = () => {
 
         {/* ---------- ADD ITEM Register Tab MODAL END ---------- */}
 
-        {/* ---------- ADD LINK Tab MODAL START---------- */}
+        {/* ---------- ADD/EDIT LINK Tab MODAL START---------- */}
         <Modal className="inpuListPopup" show={toggleAddLink} centered>
-          <Modal.Header>링크 등록</Modal.Header>
+          <Modal.Header>{editLink?"링크 수정":"링크 등록"}</Modal.Header>
           <Modal.Body>
             <Container>
               <Row className="inputBox">
                 <Col>
                   <ul className="inputList">
+                  {photo? (<><img src={photo} /></>):<></>}
+                  <div className="value"  style={{margin:'auto'}}>
+                        <Form.Control
+                          type="file"
+                    accept="image/*"
+                    //ref={photoRef}
+                    onChange={(e) => {setFileData(e.target.files[0])//fileUpload();
+                      onchangePhoto(e.target.files[0])}}
+                        ></Form.Control>
+                      </div>
+
                     {/* ---------- LINK TITLE ---------- */}
                     <li>
-                      <div className="key">링크 이름 :</div>
+                      <div className="key">{dataIndex}링크 이름 :</div>
 
                       <div className="value">
                         <Form.Control
@@ -879,6 +999,8 @@ const Curation = () => {
                     setLinktitle("");
                     setLinkurl("http://");
                     setToggleAddLink(false);
+                    setEditLink(false)
+
                   }}
                   variant="outline-secondary"
                 >
@@ -887,7 +1009,8 @@ const Curation = () => {
                 <button
                   className="grayBtn"
                   onClick={() => {
-                    submitLinkitem();
+                    fileUpload(fileData)
+                    //submitLinkitem();
                   }}
                   variant="secondary"
                 >

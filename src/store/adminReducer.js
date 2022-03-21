@@ -1,8 +1,8 @@
 import produce from "immer";
 
 export const initialState = {
-    loggedin: false,
-    level: 0
+    loggedin: true,
+    level: 999
   };
 
 export const SET_LOGIN = "SET_LOGIN"
