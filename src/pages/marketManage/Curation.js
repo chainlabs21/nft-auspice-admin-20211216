@@ -15,6 +15,8 @@ import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import moment from "moment";
+import CategoryList from "../../components/curation/Category"
+import ItemsList from "../../components/curation/ItemsList"
 
 import Select from "react-select";
 import { AiOutlinePlusSquare } from "react-icons/ai";
@@ -30,6 +32,7 @@ import PageTitle from "../../components/PageTitle";
 import I_dnPolygon from "../../assets/images/I_dnPolygon.svg";
 import axios from "axios";
 import { API } from "../../utils/api";
+import { cleanup } from "@testing-library/react";
 
 const stateOption = [
   { value: 0, label: "숨김" },
@@ -74,7 +77,7 @@ const MAP_fileextension_contentype = {
   const itemKey = [
     { title: "-", isSelect: true },
     { title: "아이템 no." },
-    { title: "아이템", Videoable: true },
+    { title: "아이템", isImage: true},//Videoable: true },
     { title: "아이템 명" },
     { title: "상태", convertInt: ["숨김", "공개"] },
     { title: "수정", hasCallback: true },
@@ -167,7 +170,7 @@ const MAP_fileextension_contentype = {
   const [linkdesc, setLinkdesc] = useState("");
   const [linkimgurl, setLinkimgurl] = useState();
   ///////////////////////
-
+  const [loadingList, setLoadingList] = useState(false);
   //////FILE
   const [fileData, setFileData] =useState();
   const[photo, setPhoto] = useState()
@@ -182,17 +185,6 @@ const MAP_fileextension_contentype = {
   const [toggleUserChange, setToggleUserChange] = useState(false)
 
   const [toggleSearchItem, setToggleSearchItem] = useState(false);
-
-  useEffect(()=>{
-    if(toggleItemChange){
-
-    }
-  },[toggleItemChange])
-
-
-
-
-
 
   //File Upload
 
@@ -276,6 +268,8 @@ const MAP_fileextension_contentype = {
             button: item.itemid,
             id: item.itemid,
             ownerAddress: item.author_info?.username,
+            type: item.typestr,
+            
           };
           setShowSelectItems((prevState) => [...prevState, fields]);
         });
@@ -319,7 +313,6 @@ const MAP_fileextension_contentype = {
         setTypeState(0)
         setCurState(1)
         setToggleEditCategory(false);
-        getCategory();
       });
   }
 
@@ -329,13 +322,12 @@ const MAP_fileextension_contentype = {
     //typeState     => TYPE
     await axios.post(`${API.SET_ITEM}/category`, null, {
       params: {
-        visible: curState,
-        name: categoryName,
-        type: typeState,
+        visible : curState,
+        name    : categoryName,
+        type    : typeState,
       },
     }).then((resp)=>{
       console.log(resp);
-      getCategory()
     });
     setCategoryName("");
     setToggleRegister(false);
@@ -354,7 +346,6 @@ const MAP_fileextension_contentype = {
       setCategoryName("");
     setTypeState(0)
     setToggleEditCategory(false);
-    getCategory();
     })
     
     
@@ -441,12 +432,12 @@ const MAP_fileextension_contentype = {
     }
   }, [itemsList]);
 
-  useEffect(() => {
-    setItemsList({});
-    setShowSelectItems([]);
-    setToggleSearchItem(false);
+  // useEffect(() => {
+  //   setItemsList({});
+  //   setShowSelectItems([]);
+  //   setToggleSearchItem(false);
     
-  }, [selectedCat]);
+  // }, [selectedCat]);
 
   function getItemsList() {
     setItemsData([]);
@@ -477,14 +468,15 @@ const MAP_fileextension_contentype = {
               cat: v.item.categorystr,
               token: "KLAY",
               price: "10.0000",
+              type: v.item.typestr
             };
-            console.log(item);
+            //console.log(item);
             setItemsData((pre) => [...pre, item]);
           });
         }
         if (selectedCat[1] == 1) {
           itemList.map((v, i) => {
-            console.log(v);
+            //console.log(v);
             const setting = {
               icon: <TiSpanner />,
               callback: (i) => {
@@ -501,8 +493,9 @@ const MAP_fileextension_contentype = {
               cat: v.item.categorystr,
               token: "KLAY",
               price: "10.0000",
+              type: v.item.typestr
             };
-            console.log(item);
+            //console.log(item);
             setItemsData((pre) => [...pre, item]);
           });
         } else if (selectedCat[1] == 2) {
@@ -553,6 +546,7 @@ const MAP_fileextension_contentype = {
               title: v.title,
               desc: v.description,
               url: v.url,
+              //type: v.type
             };
             setItemsData((pre) => [...pre, item]);
           });
@@ -592,42 +586,6 @@ const MAP_fileextension_contentype = {
     console.log(toggleEditCategory)
 
   },[toggleEditCategory])
-  //카테고리 목록
-
-  function getCategory(){
-    setTableData([]);
-    axios.get(`http://itemverse1.net:32287/admin/search/maincategory`).then((resp) => {
-      const MainCategory = resp.data.list;
-      //setTableData(MainCategory)
-      MainCategory.map((v, i) => {
-        console.log(v)
-        //console.log(v);
-        const setting = {
-          icon: <TiSpanner />,
-          callback: (i) => {
-            setCategoryName(v.name);
-            setCurState(v.visible);
-            setTypeState(v.type);
-            setDataIndex(v.id);
-            setToggleEditCategory(true);
-          },
-        };
-        const information = {
-          no      : v.displayorder,
-          edit: setting,
-          visible: v.visible,
-          name: v.name,
-          code: v["itemsss"].length,
-          type: v.type?v.type:0,
-          size: v.code,
-        };
-        setTableData((pre) => [...pre, information]);
-      });
-    });
-  }
-  useEffect(() => {
-    getCategory();
-  }, []);
 
 
 
@@ -643,7 +601,8 @@ const MAP_fileextension_contentype = {
             <PageTitle title={"큐레이션"} margin={5} />
           </Col>
         </Row>
-        <Row>
+        <CategoryList selected={(e)=>{loadingList?alert('currently Loading'):setSelectedCat(e)}} />
+        {/* <Row>
           <Col style={{ paddingBottom: "30px" }}>
             <Button variant="secondary" onClick={() => setToggleRegister(true)}>
               신규 등록
@@ -667,9 +626,9 @@ const MAP_fileextension_contentype = {
           <PageTitle
             title={selectedCat ? selectedCat[2] : "선택된 항목 없음"}
           />
-        </Row>
-
-        <Row>
+        </Row> */}
+        {selectedCat? (<ItemsList data={selectedCat} isLoading={setLoadingList}/>):''}
+        {/* <Row>
           <Col style={{ paddingBottom: "30px" }}>
             <Button
               variant="secondary"
@@ -718,7 +677,7 @@ const MAP_fileextension_contentype = {
               onSelect={(e) => {}}
             />
           </Col>
-        </Row>
+        </Row> */}
 
         {/* SELECT ITEM PAGE */}
         {/* SELECT ITEM PAGE */}

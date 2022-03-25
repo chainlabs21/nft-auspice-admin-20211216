@@ -50,6 +50,7 @@ const ManageCategory = () => {
   const [toggleSetting, setToggleSettings] = useState(false);
   const [visible, setVisible] = useState(false);
   const [categoryName, setCategoryName] = useState("");
+  const [categoryText, setCategoryText] = useState("")
   const [dataIndex, setDataIndex] = useState(0);
   const [active, setActive] = useState(0);
   const [sortedCategory, setSortedCategory] = useState([]);
@@ -57,14 +58,6 @@ const ManageCategory = () => {
   const [selectedOrder, setSelectedOrder] = useState(-1)
   const dispatch = useDispatch();
   const changeDisplayOrder = (index,indexorder, direction) => {
-    if (direction === 0) { //down
-      console.log('아래')
-
-    } else { //up
-      console.log('위')
-
-    }
-
     axios.post(process.env.REACT_APP_API_SERVER+'/queries/swap/categories/group_/items/'+index+'/'+indexorder+'/'+direction)
     .then((resp)=>{
       console.log(resp)
@@ -73,17 +66,30 @@ const ManageCategory = () => {
     //setSortedCategory(temp);
   };
 
-  const submitRegister = () => {
-    //dispatch here
-    dispatch({
-      type: ADD_NEW_CATEGORY,
-      payload: { name: categoryName, state: curState },
-    });
+  const resetVar=()=>{
+    setDataIndex(-1);
+    setSelectedOrder(-1)
+    setCategoryName("")
+    setCategoryText("")
+    setVisible(false)
+  }
 
-    setCategoryName("");
-    setToggleRegister(false);
-    setVisible(false);
+  const submitRegister = () => {
+    console.log(`${API.SET_CATEGORIES}/categories`)
+    axios.put(`${API.SET_CATEGORIES}/categories`, {category: categoryName, visible: curState, textdisp:categoryText, group_: 'items'}).then((res) => {
+      resetVar()
+      setToggleRegister(false);
+      getCategory()
+    })
   };
+
+  function onDelete(e){
+    axios.delete(`${API.DELETE_CATEGORIES}/categories/id/${e}`).then((resp)=>{
+      resetVar()
+      setToggleSettings(false);
+      getCategory()
+    })
+  }
 
   const submitSettings = () => {
     //dispatch here
@@ -101,12 +107,13 @@ const ManageCategory = () => {
     setVisible(false);
   };
   //DB에서 카테고리 리스트 요청
-  //Broken af
-  useEffect(() => {
+  function getCategory(){
     axios.get(API.GET_CATEGORIES('items')).then((res) => {
       setTableData([])
-      const getCategories = res.data.list
-      getCategories.map((cat, index) => {
+      const getCategories = res.data.list;
+      console.log(getCategories)
+      getCategories.map(async (cat, index) => {
+        let count = await axios.get(`${API.COUNT}/items/categorystr/${cat.category}`)
         const settingData = {
           icon: <TiSpanner style={{ fontSize: "24px" }} />,
           callback: () => {
@@ -114,7 +121,8 @@ const ManageCategory = () => {
             setDataIndex(cat.id);
             setSelectedOrder(cat.displayOrder)
             setCategoryName(cat.category)
-            setCurState(cat.visible)
+            setCategoryText(cat.textdisp)
+            setVisible(cat.visible)
           },
         };
         const information = {
@@ -122,13 +130,17 @@ const ManageCategory = () => {
           category: cat.category,
           visible: cat.visible,
           displayOrder: cat.displayOrder,
-          itemsize: 105,
+          itemsize: count.data.resp,
           edit: settingData,
+          //textdisp: 
         }
 
         setTableData(prev => [...prev, information])
       })
     })
+  }
+  useEffect(() => {
+    getCategory()
   }, []);
 /*
   useEffect(() => {
@@ -182,7 +194,7 @@ const ManageCategory = () => {
           <FunctionalTable
             wrapName="tableHasNo"
             keyList={keyList}
-            tableData={tableData}
+            tableData={tableData.sort((a, b)=>(a.displayOrder-b.displayOrder))}
             clean
           />
         </Col>
@@ -210,12 +222,22 @@ const ManageCategory = () => {
                   </li>
 
                   <li>
-                    <div className="key">카테고리 이름 :</div>
+                    <div className="key">카테고리 코드 :</div>
 
                     <div className="value">
                       <Form.Control
                         onChange={(e) => setCategoryName(e.target.value)}
                         value={categoryName}
+                      ></Form.Control>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="key">카테고리 표기 :</div>
+
+                    <div className="value">
+                      <Form.Control
+                        onChange={(e) => setCategoryText(e.target.value)}
+                        value={categoryText}
                       ></Form.Control>
                     </div>
                   </li>
@@ -314,7 +336,7 @@ const ManageCategory = () => {
                 <div className="value orderValue">
                   <ListGroup className="categoryList" as="ul">
                     {tableData.map((v, i) => {
-                      {console.log(v)}
+                      //{console.log(v)}
                       return (
                         <ListGroup.Item
                           key={i}
@@ -344,6 +366,13 @@ const ManageCategory = () => {
               </li>
             </ul>
             <div className="actionBtnBox">
+              <button
+              className="redBtn"
+              variant="secondary"
+                onClick={()=>{onDelete(dataIndex)}}
+              >
+                삭제
+              </button>
               <button
                 className="whiteBtn"
                 variant="secondary"

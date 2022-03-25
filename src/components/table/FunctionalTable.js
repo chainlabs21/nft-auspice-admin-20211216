@@ -570,28 +570,56 @@ const FunctionalTable = ({
                               
                             }
                             if (refinedKeyList[j].Videoable) {
-                              if (data[11]=='image')
-                              return (<td key={j}>
-                                
-                                <img src={v} style={{width: '128px', height:'128px', marginTop:'15px', marginBottom:'15px'}}/>
-                                </td>);
+                              //console.log(v[0])
+                              if (v[0]=='image'){
+                                return (<td key={j}>
+                                  <img src={v[1]} style={{width: '128px', height:'128px', marginTop:'15px', marginBottom:'15px'}}/>
+                                  </td>);
+                              }
                                 else
                                 return(
+                                  <td key={j}>
                                   <video
-                                    autoPlay
                                     muted
-                                    loop
+                                    autoPlay
                                     id="video"
                                     className="imageBox"
                                     //ref={video}
                                     onClick={() => {}}
                                     style={{width: '128px', height:'128px', marginTop:'15px', marginBottom:'15px'}}
                                   >
-                                    <source src={v} />
+                                    <source src={v[1]} />
                                   </video>
+                                  </td>
                                 )
                               
+
                             }
+
+                            // if (refinedKeyList[j].Videoable) {
+                            //   let {type} = tableData[i]
+                            //   if (!type){return;}
+                            //   if (type=='image')
+                            //   return (<td key={j}>
+                                
+                            //     <img src={v} style={{width: '128px', height:'128px', marginTop:'15px', marginBottom:'15px'}}/>
+                            //     </td>);
+                            //     else
+                            //     return(
+                            //       <td key={j}>
+                            //       <video
+                            //         id="video"
+                            //         className="imageBox"
+                            //         //ref={video}
+                            //         onClick={() => {}}
+                            //         style={{width: '128px', height:'128px', marginTop:'15px', marginBottom:'15px'}}
+                            //       >
+                            //         <source src={v} />
+                            //       </video>
+                            //       </td>
+                            //     )
+                              
+                            // }
                             if (refinedKeyList[j].hasCallback) {
                               return (
                                 <td key={j} style={{

@@ -10,6 +10,7 @@ const TransactionState = React.lazy(() => import("./pages/marketManage/Transacti
 const SalesHistory = React.lazy(() => import("./pages/marketManage/SalesHistory"));
 const ItemDetail = React.lazy(() => import("./pages/marketManage/ItemDetail"));
 const auctionSettlement = React.lazy(() => import("./pages/auction/AuctionSettlement"));
+
 const MintingInspection = React.lazy(() =>
   import("./pages/marketManage/MintingInspection")
 );
@@ -17,6 +18,7 @@ const ManageCategory = React.lazy(() =>
   import("./pages/marketManage/ManageCategory")
 );
 const Curation = React.lazy(() => import("./pages/marketManage/Curation"));
+const CurationSearch = React.lazy(() => import("./components/curation/modal/SearchItem"));
 
 const StatState = React.lazy(() => import("./pages/statistics/StatState"));
 const StatInfo = React.lazy(() => import("./pages/statistics/StatInfo"));
@@ -170,5 +172,11 @@ const routes = [
     name: "경매정산",
     component: auctionSettlement,
   },
+  {
+    path: "/curation/searchitem",
+    exact: true,
+    name: "아이템 등록",
+    component: CurationSearch,
+  }
 ];
 export default routes;

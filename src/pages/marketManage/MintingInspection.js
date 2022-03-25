@@ -1,4 +1,5 @@
 import {
+  Form,
   Modal,
   Card,
   Table,
@@ -6,7 +7,10 @@ import {
   Col,
   Container,
   Button,
+  DropdownButton,
+  Dropdown,
 } from "react-bootstrap";
+import { DropdownWrapper } from "../../stlye/globalStyles";
 import { useSelector } from "../../store/reducer";
 import FunctionalTable from "../../components/table/FunctionalTable";
 import { useEffect, useState } from "react";
@@ -81,7 +85,18 @@ const MintingInspection = () => {
   const [categoryData, setCategoryData] = useState([]);
   const [toggleRegister, setToggleRegister] = useState(false)
   const [reportData, setReportData] = useState([])
+  const [toggleNewCategory, setToggleNewCategory] = useState(false)
+  const [categoryName, setCategoryName] = useState('');
+  const [visible, setVisible] = useState(false);
+
   const dispatch = useDispatch();
+
+  function submitCategory(){
+
+  }
+  function onDelete(){
+
+  }
   const handleSubmit = () => {
     //dispatch
     setItemToggle(false);
@@ -115,8 +130,10 @@ const MintingInspection = () => {
           const callbackData = {
             icon: <TiSpanner style={{ fontSize: "24px" }} />,
             callback: (index) => {
-              setItemToggle(true);
+              setToggleNewCategory(true);
               setDataIndex(i);
+              setCategoryName(v.name);
+              setVisible(v.visible)
             },
           }
           const item={
@@ -150,7 +167,7 @@ const MintingInspection = () => {
           const item={
             id: v.id,                                               //0
             //createdat: moment(v.createdat).format("YYYY-MM-DD"),
-            image: v.item_info.url,                                 //1
+            image: [v.item_info.typestr, v.item_info.url],                                 //1
             itemtitle: v.item_info.titlename,                       //2
             status: v.status,                                       //3
             setting: callbackData,                                  //4
@@ -160,7 +177,7 @@ const MintingInspection = () => {
             price: v.item_info.pricemax,                            //8
             category: '카테고리',                                     //9
             description: v.description,                             //10
-            itemtype: v.item_info.typestr                           //11
+                       //11
           }
           setReportData(pre=>[...pre, item])
         })
@@ -178,7 +195,7 @@ const MintingInspection = () => {
       <Row>
           <Col style={{ paddingBottom: "30px" }}>
             <Button variant="secondary" onClick={() => setToggleRegister(true)}>
-              신규 등록
+              신고 카테고리 등록
             </Button>
           </Col>
         </Row>
@@ -258,6 +275,103 @@ const MintingInspection = () => {
                 </Button>
               </Col>
             </Row>
+          </Container>
+        </Modal.Body>
+      </Modal>
+
+      {/** ADD NEW CATEGORY */}
+
+      <Modal
+        centered
+        show={toggleNewCategory}
+        className="categoryPopup setting-modal"
+      >
+        <Modal.Body>
+          <Container>
+            <Row
+              style={{
+                marginBottom: "2rem",
+                fontSize: "1.3rem",
+                fontWeight: "bold",
+                color: "grey",
+              }}
+            >
+              <Col>
+                <header>카테고리 설정</header>
+              </Col>
+            </Row>
+
+            <ul className="settingList">
+              <li>
+                <div className="key">
+                  <Form.Label>상태 :</Form.Label>
+                </div>
+                <div className="value">
+                  <DropdownWrapper>
+                    <DropdownButton
+                      title={
+                        visible === 1 ? "show" : "hide"
+                      }
+                    >
+                      <Dropdown.Item
+                        onClick={() => {
+                          setVisible(false);
+                        }}
+                      >
+                        hide
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setVisible(true);
+                        }}
+                      >
+                        show
+                      </Dropdown.Item>
+                    </DropdownButton>
+                  </DropdownWrapper>
+                </div>
+              </li>
+
+              <li>
+                <div className="key">
+                  <Form.Label>카테고리명 :</Form.Label>
+                </div>
+                <div className="value">
+                  <Form.Control
+                    onChange={(e) => setCategoryName(e.target.value)}
+                    value={categoryName}
+                    type="text"
+                  />
+                </div>
+              </li>
+            </ul>
+            <div className="actionBtnBox">
+              <button
+              className="redBtn"
+              variant="secondary"
+                onClick={()=>{onDelete(dataIndex)}}
+              >
+                삭제
+              </button>
+              <button
+                className="whiteBtn"
+                variant="secondary"
+                onClick={() => {
+                  setToggleNewCategory(false);
+                  setCategoryName("");
+                  setVisible(false);
+                }}
+              >
+                취소
+              </button>
+              <button
+                className="grayBtn"
+                variant="secondary"
+                onClick={submitCategory}
+              >
+                확인
+              </button>
+            </div>
           </Container>
         </Modal.Body>
       </Modal>

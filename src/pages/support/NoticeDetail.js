@@ -14,18 +14,20 @@ import {
   CREATE_NOTICE,
   DELETE_NOTICE,
 } from "../../store/supportReducer";
+import { API } from "../../utils/api";
 import PageTitle from "../../components/PageTitle";
+import axios from "axios";
 const kindOption = [
   { value: 0, label: "일반 공지" },
   { value: 1, label: "팝업 공지" },
 ];
 const openOption = [
-  { value: 0, label: "사용" },
-  { value: 1, label: "숨김" },
+  { value: 0, label: "숨김" },
+  { value: 1, label: "노출" },
 ];
-const popupOpenOption = [
-  { value: 0, label: "사용" },
-  { value: 1, label: "숨김" },
+const lockedOption = [
+  { value: 0, label: "비고정" },
+  { value: 1, label: "고정" },
 ];
 const languageOption = [
   { value: 0, label: "한국어" },
@@ -38,14 +40,64 @@ const NoticeDetail = () => {
   const { search } = useLocation();
   const { postId } = queryString.parse(search);
   const [kind, setKind] = useState(0);
-  const [open, setOpen] = useState(0);
-  const [popupOpen, setPopupOpen] = useState(0);
+  const [open, setOpen] = useState(1);
+  const [locked, setLocked] = useState(0);
   const [language, setLanguage] = useState(0);
   const [html, setHtml] = useState("");
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(true);
   const history = useHistory();
   const dispatch = useDispatch();
+
+  function uploadAdapter(loader){
+    return{
+      upload: ()=>{
+        return new Promise((resolve, reject)=>{
+          const body = new FormData();
+          loader.file.then((file)=>{
+            body.append("file", file);
+            axios.post(`http://itemverse1.net:32287/curation/upload/file/notice`, body)
+            .then((resp)=>{
+              resolve({
+                default: resp.data.payload.url
+              })
+            })
+          })
+        })
+      }
+    }
+  }
+
+  function uploadPlugin(editor) {
+    editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
+      return uploadAdapter(loader);
+    };
+  }
+
+  const custom_config = {
+    extraPlugins: [ uploadPlugin ],
+    toolbar: {
+      items: [
+        'heading',
+        '|',
+        'bold',
+        'italic',
+        'link',
+        'bulletedList',
+        'numberedList',
+        '|',
+        'blockQuote',
+        'insertTable',
+        '|',
+        'imageUpload',
+        'undo',
+        'redo'
+      ]
+    },
+    table: {
+      contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ]
+    }
+  }
 
   const handleDelete = () => {
     //dispatch
@@ -60,44 +112,57 @@ const NoticeDetail = () => {
     history.push("/support/notice/");
   };
   const handleSubmit = () => {
+
+    axios.put(`${API.SET_CATEGORIES}/announcements`, {
+      isPopup: kind,
+      category: 'notice',
+      active: open,
+      lang: language,
+      title: title,
+      contentbody: html,
+      locked: locked,
+    }).then((resp)=>{
+      console.log(resp)
+      history.push("/support/notice/");
+    })
     //dispatch
     //create
-    const now = moment();
-    if (postId === "new") {
-      dispatch({
-        type: CREATE_NOTICE,
-        payload: {
-          updatedAt: now.format("2012-01-03 11:52:31"),
-          kind: kind,
-          open: open,
-          popupOpen: popupOpen,
-          language: language,
-          title: title,
-          html: html,
-        },
-      });
-    }
-    dispatch({
-      type: CHANGE_NOTICE_DATA,
-      payload: {
-        updatedAt: now.format("2012-01-03 11:52:31"),
-        kind: kind,
-        open: open,
-        popupOpen: popupOpen,
-        language: language,
-        title: title,
-        html: html,
-        id: postId,
-      },
-    });
-    history.push("/support/notice/");
+    // const now = moment();
+    // if (postId === "new") {
+    //   dispatch({
+    //     type: CREATE_NOTICE,
+    //     payload: {
+    //       updatedAt: now.format("2012-01-03 11:52:31"),
+    //       kind: kind,
+    //       open: open,
+    //       popupOpen: popupOpen,
+    //       language: language,
+    //       title: title,
+    //       html: html,
+    //     },
+    //   });
+    // }
+    // dispatch({
+    //   type: CHANGE_NOTICE_DATA,
+    //   payload: {
+    //     updatedAt: now.format("2012-01-03 11:52:31"),
+    //     kind: kind,
+    //     open: open,
+    //     popupOpen: popupOpen,
+    //     language: language,
+    //     title: title,
+    //     html: html,
+    //     id: postId,
+    //   },
+    // });
+    // history.push("/support/notice/");
   };
 
   useEffect(() => {
     if (noticeList && postId !== "new") {
       setKind(noticeList[postId].kind);
       setOpen(noticeList[postId].open);
-      setPopupOpen(noticeList[postId].popupOpen);
+      setLocked(noticeList[postId].popupOpen);
       setLanguage(noticeList[postId].language);
       setTitle(noticeList[postId].title);
       setHtml(noticeList[postId].html);
@@ -147,7 +212,7 @@ const NoticeDetail = () => {
               </RowWrapper>
               <RowWrapper>
                 <div className="key">
-                  <p>일반공지 공개여부 </p>
+                  <p>공개여부 </p>
                   <p>:</p>
                 </div>
 
@@ -166,7 +231,7 @@ const NoticeDetail = () => {
               </RowWrapper>
               <RowWrapper>
                 <div className="key">
-                  <p>팝업공지 공개여부 </p>
+                  <p>고정 공지 여부 </p>
                   <p>:</p>
                 </div>
 
@@ -174,11 +239,11 @@ const NoticeDetail = () => {
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
-                    defaultValue={popupOpenOption[popupOpen]}
+                    defaultValue={lockedOption[locked]}
                     name="color"
-                    options={popupOpenOption}
+                    options={lockedOption}
                     onChange={(e) => {
-                      setPopupOpen(e.value);
+                      setLocked(e.value);
                     }}
                   />
                 </div>
@@ -221,6 +286,7 @@ const NoticeDetail = () => {
             </Card.Header>
             <Card.Body>
               <AllCkEditor
+              config={custom_config}
                 editor={ClassicEditor}
                 data={html}
                 onChange={(event, editor) => {
