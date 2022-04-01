@@ -11,9 +11,10 @@ const SalesHistory = React.lazy(() => import("./pages/marketManage/SalesHistory"
 const ItemDetail = React.lazy(() => import("./pages/marketManage/ItemDetail"));
 const auctionSettlement = React.lazy(() => import("./pages/auction/AuctionSettlement"));
 
-const MintingInspection = React.lazy(() =>
-  import("./pages/marketManage/MintingInspection")
+const Report = React.lazy(() =>
+  import("./pages/marketManage/Report")
 );
+const ReportDetail = React.lazy(()=>import("./pages/marketManage/ReportDetail"))
 const ManageCategory = React.lazy(() =>
   import("./pages/marketManage/ManageCategory")
 );
@@ -95,10 +96,16 @@ const routes = [
     component: SalesHistory,
   },
   {
-    path: "/mintingInspection",
+    path: "/report",
     exact: true,
-    name: "Minting Inspection",
-    component: MintingInspection,
+    name: "Report",
+    component: Report,
+  },
+  {
+    path: "/report/detail",
+    exact: false,
+    name: "신고 상세",
+    component: ReportDetail,
   },
   {
     path: "/marketCategoryManage",

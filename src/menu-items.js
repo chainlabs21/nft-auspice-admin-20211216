@@ -74,10 +74,10 @@ const chartData = {
           level: 0,
         },
         {
-          id: "MintingInspection",
+          id: "Report",
           title: "신고접수",
           type: "item",
-          url: "/mintingInspection",
+          url: "/report",
           level: 0,
         },
         {

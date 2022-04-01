@@ -11,23 +11,22 @@ import { NOTICE_DETAIL_URL } from "../../config/urlDefine";
 import { CREATE_CATEGORY, CHANGE_CATEGORY } from "../../store/supportReducer";
 import { useDispatch } from "react-redux";
 import PageTitle from "../../components/PageTitle";
+import axios from "axios";
+import { API } from "../../utils/api";
+import moment from "moment";
 
 const createStateOption = [
-  { value: 0, label: "hide" },
-  { value: 1, label: "show" },
+  { value: 0, label: "숨김" },
+  { value: 1, label: "보임" },
 ];
 
-const keyList = [
-  { title: "No" },
-  { title: "등록일", isDate: true },
-  { title: "수정", hasCallback: true },
-  { title: "카테고리", convertInt: ["로그인/계정", "이용 관련", "기타 문의"] },
-  { title: "공개여부", convertInt: ["사용", "숨김"] },
-  { title: "언어", convertInt: ["한국어", "영어", "중국어"] },
-  { title: "클라 순서" },
-  { title: "제목" },
-  { title: "내용" },
+const LangOption = [
+  { value: 0, label: "한국어" },
+  { value: 1, label: "영어" },
+  { value: 2, label: "중국어" },
 ];
+
+
 const keyToValue = [
   "no",
   "createdAt",
@@ -39,22 +38,37 @@ const keyToValue = [
   "html",
 ];
 const Faq = () => {
+  const [language, setLanguage] = useState(0)
   const [toggleCreate, setToggleCreate] = useState(false);
   const [toggleSetting, setToggleSetting] = useState(false);
   const [toggleFaq, setToggleFaq] = useState(false);
-  const [categoryState, setCategoryState] = useState(0);
+  const [categoryState, setCategoryState] = useState(1);
   const [categoryName, setCategoryName] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
   const [categoryKind, setCategoryKind] = useState("");
   const [faqTitle, setFaqTitle] = useState("");
-  const [faqState, setFaqState] = useState(1);
+  const [faqKind, setFaqKind] = useState(1);
   const [faqBody, setFaqBody] = useState("");
   const [settingOption, setSettingOption] = useState([]);
+  const [edit, setEdit]=useState(false);
 
   const history = useHistory();
   const dispatch = useDispatch();
   const { noticeList, categoryList } = useSelector((state) => state.support);
   const [tableData, setTableData] = useState([]);
+
+  const keyList = [
+    { title: "No" },
+    { title: "등록일", isDate: true },
+    { title: "수정", hasCallback: true },
+    { title: "카테고리", convertIntComplex: settingOption},
+    { title: "공개여부", convertInt: ["보임", "숨김"] },
+    { title: "언어", convertInt: ["한국어", "영어", "중국어"] },
+    { title: "클라 순서" },
+    { title: "제목" },
+    { title: "내용" },
+  ];
+  
 
   const callbackData = {
     icon: <TiSpanner style={{ fontSize: "24px" }} />,
@@ -69,8 +83,13 @@ const Faq = () => {
       type: CREATE_CATEGORY,
       payload: { title: categoryName, open: categoryState },
     });
+    axios.post(`${API.FAQ_CATEGORY}`, {textdisp: categoryName, status: categoryState, lang: language})
+    .then((resp)=>{
+      console.log(resp)
+    })
+
     setNewCategoryName("");
-    setCategoryState(0);
+    setCategoryState(1);
     setToggleCreate(false);
   };
   const handleSetting = () => {
@@ -83,6 +102,9 @@ const Faq = () => {
         index: categoryKind,
       },
     });
+    axios.put(`${API.FAQ_CATEGORY}`, {textdisp: newCategoryName, status: categoryState, id:categoryKind}).then((resp)=>{
+      console.log(resp)
+    })
 
     setNewCategoryName("");
     setCategoryState(0);
@@ -91,35 +113,113 @@ const Faq = () => {
   };
   const handleFaq = () => {
     //dispatch
+    if(!edit){
+    axios.post(`${API.FAQ_ITEM}`, {title: faqTitle, description: faqBody, category: categoryKind, lang: 0, status: categoryState}).then((resp)=>{
+      if(resp){
+        //fetchlist();
+      }
+    })
+    }else{
+      axios.put(`${API.FAQ_ITEM}`, {id:faqKind, title: faqTitle, description: faqBody, category: categoryKind, lang: 0, status: categoryState}).then((resp)=>{
+        if(resp){
+          //fetchlist();
+        }
+      })
+    }
     setToggleFaq(false);
     setFaqTitle("");
     setFaqBody("");
-    setCategoryState(0);
+    setCategoryState(1);
     setCategoryKind(0);
   };
-  useEffect(() => {
-    const temp = [];
-    noticeList.forEach((v, i) => {
-      if (v.isFaq) {
-        temp.push(v);
-      }
-    });
-    const jsonData = JsonToTableData(temp, keyToValue);
 
-    jsonData.forEach((v, i) => {
-      v.splice(2, 0, callbackData);
-    });
+  // useEffect(()=>{
 
-    setTableData(jsonData);
-  }, [noticeList]);
+  // },[])
 
-  useEffect(() => {
-    const temp = [];
-    categoryList.forEach((v, i) => {
-      temp.push({ value: i, label: v.title });
-    });
-    setSettingOption(temp);
-  }, [categoryList]);
+  // useEffect(() => {
+  //   const temp = [];
+  //   noticeList.forEach((v, i) => {
+  //     if (v.isFaq) {
+  //       temp.push(v);
+  //     }
+  //   });
+  //   const jsonData = JsonToTableData(temp, keyToValue);
+
+  //   jsonData.forEach((v, i) => {
+  //     v.splice(2, 0, callbackData);
+  //   });
+
+  //   setTableData(jsonData);
+  // }, [noticeList]);
+
+  function fetchlist(){
+
+  }
+
+  // useEffect(() => {
+  //   const temp = [];
+  //   categoryList.forEach((v, i) => {
+  //     temp.push({ value: i, label: v.title });
+  //   });
+  //   setSettingOption(temp);
+  // }, [categoryList]);
+
+  useEffect(async ()=>{
+    //if(toggleSetting || toggleFaq){
+      setSettingOption([])
+      await axios.get(`${API.FAQ_CATEGORY}/0`).then((respp)=>{
+        console.log(respp)
+        if(!respp)return;
+        let {resp} = respp.data;
+        resp.forEach((v, i)=>{
+          if(i==0){setCategoryKind(v.id); setCategoryState(v.status)}
+          setSettingOption(pre=>[...pre, {index: i, value: v.id, label: v.textdisp, status: v.status}])  
+        })
+      })
+      setTableData([])
+      axios.get(`${API.FAQ_ITEM}`).then((resp)=>{
+        
+        console.log(resp);
+        let {rows} = resp.data.list;
+        if(!rows)return;
+        rows.forEach((v, i)=>{
+  
+          const faqcallbackData={
+            icon: <TiSpanner style={{ fontSize: "24px" }} />,
+            callback: (index) => {
+                //      history.push(NOTICE_DETAIL_URL + `?postId=${noticeList[index].id}`);
+              //window.location.hash = `#/support/notice/detail?postId=${noticeList[index].id}`;
+              setFaqTitle(v.title);
+              setFaqKind(v.id);
+              setCategoryState(v.status)
+              setFaqBody(v.description);
+              setEdit(true)
+              setCategoryKind(v.category)
+              console.log(v)
+              
+              setToggleFaq(true)
+  
+  
+            },
+          }
+          const faqTableData={
+            no          : i+1,
+            createdat   : v.createdat,
+            callback    : faqcallbackData,
+            category    : v.category, //settingOption.find(obj=>{return obj.value == v.category}).label,
+            status      : v.status,
+            lang        : v.lang,
+            order       : v.id,
+            title       : v.title,
+            description : v.description
+          }
+          setTableData(pre=>[...pre, faqTableData])
+        })
+  
+      })
+    //}
+  },[])
 
   return (
     <Container fluid>
@@ -139,7 +239,7 @@ const Faq = () => {
           <ButtonWrapper
             onClick={() => {
               setToggleSetting(true);
-              setCategoryState(0);
+              setCategoryState(1);
               setCategoryKind(0);
               setNewCategoryName(categoryList[0].title);
             }}
@@ -169,6 +269,8 @@ const Faq = () => {
           />
         </Col>
       </Row>
+
+      
       <Modal className="inpuListPopup" show={toggleCreate} centered>
         <Modal.Header>카테고리 등록</Modal.Header>
         <Modal.Body>
@@ -177,13 +279,30 @@ const Faq = () => {
               <Col>
                 <ul className="inputList">
                   <li>
-                    <div className="key">공지 유형 :</div>
+                    <div className="key">언어 :</div>
 
                     <div className="value">
                       <Select
                         className="basic-single"
                         classNamePrefix="select"
-                        defaultValue={createStateOption[0]}
+                        defaultValue={LangOption[language]}
+                        name="color"
+                        options={LangOption}
+                        onChange={(e) => {
+                          setLanguage(e.value);
+                        }}
+                      />
+                    </div>
+                  </li>
+
+                  <li>
+                    <div className="key">상태 :</div>
+
+                    <div className="value">
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={createStateOption[categoryState]}
                         name="color"
                         options={createStateOption}
                         onChange={(e) => {
@@ -242,7 +361,8 @@ const Faq = () => {
                       <Select
                         className="basic-single"
                         classNamePrefix="select"
-                        defaultValue={createStateOption[0]}
+                        defaultValue={createStateOption[categoryState]}
+                        value={createStateOption[categoryState]}
                         name="color"
                         options={createStateOption}
                         onChange={(e) => {
@@ -263,6 +383,8 @@ const Faq = () => {
                         options={settingOption}
                         onChange={(e) => {
                           setCategoryKind(e.value);
+                          setNewCategoryName(e.label);
+                          setCategoryState(e.status)
                         }}
                       />
                     </div>
@@ -288,7 +410,7 @@ const Faq = () => {
                 className="whiteBtn"
                 onClick={() => {
                   setToggleSetting(false);
-                  setCategoryState(0);
+                  setCategoryState(1);
                   setCategoryKind(0);
                   setNewCategoryName("");
                 }}
@@ -322,7 +444,7 @@ const Faq = () => {
                       <Select
                         className="basic-single"
                         classNamePrefix="select"
-                        defaultValue={createStateOption[0]}
+                        defaultValue={createStateOption[categoryState]}
                         name="color"
                         options={createStateOption}
                         onChange={(e) => {
@@ -335,10 +457,13 @@ const Faq = () => {
                     <div className="key">카테고리 :</div>
 
                     <div className="value">
+                      {console.log(categoryKind)}
                       <Select
                         className="basic-single"
                         classNamePrefix="select"
-                        defaultValue={settingOption[0]}
+                        //defaultValue={settingOption.find(obj=>{return obj.value == categoryKind})}
+                        //value={settingOption.find(obj=>{return obj.value == categoryKind})}
+                        value={settingOption.find(obj=>{return obj.value == categoryKind})}
                         name="color"
                         options={settingOption}
                         onChange={(e) => {
@@ -380,7 +505,7 @@ const Faq = () => {
                     onClick={() => {
                       setToggleFaq(false);
                       setNewCategoryName("");
-                      setCategoryState(0);
+                      setCategoryState(1);
                       setFaqTitle("");
                       setFaqBody("");
                       setCategoryKind(0);

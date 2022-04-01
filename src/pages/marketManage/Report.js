@@ -76,7 +76,7 @@ const stateOption = [
 ];
 
 
-const MintingInspection = () => {
+const Report = () => {
   const { itemList, todayRegister, totalRegister, mintingWait, totalMinting } =
     useSelector((state) => state.item);
   const [tableData, setTableData] = useState([]);
@@ -160,7 +160,8 @@ const MintingInspection = () => {
           const callbackData = {
             icon: <TiSpanner style={{ fontSize: "24px" }} />,
             callback: (index) => {
-              setItemToggle(true);
+              //setItemToggle(true);
+              window.location.hash = `#/report/detail?reportId=${v.id}`;
               setDataIndex(i);
             },
           }
@@ -378,4 +379,4 @@ const MintingInspection = () => {
     </Container>
   );
 };
-export default MintingInspection;
+export default Report;

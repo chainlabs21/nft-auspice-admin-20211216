@@ -642,6 +642,16 @@ const FunctionalTable = ({
                                 </td>
                               );
                             }
+                            if (refinedKeyList[j].convertIntComplex) {
+                              return (
+                                <td key={j} style={{
+                                  textAlign: 'center', 
+                                  verticalAlign: 'middle'
+                                }}>
+                                  {refinedKeyList[j].convertIntComplex.find(obj=>{return obj.value == v}).label}
+                                </td>
+                              );
+                            }
                             if (refinedKeyList[j].isCategoryType) {
                               return (
                                 <td key={j} style={{

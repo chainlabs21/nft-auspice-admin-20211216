@@ -20,6 +20,12 @@ export const API = {
   DELETE_ITEMS: `${apiServer}/curation/delete`,
   GET_NOTICES: `${apiServer}/admin/findcount/announcements`,
 
+  FAQ_CATEGORY: `${apiServer}/admin/faq/category`,
+  //PUT   : {*id, *textdisp, lang, *state}
+  //POST  : {textdisp, lang, state}
+  //GET   : /:lang
+  //DELETE: /:id
+  FAQ_ITEM: `${apiServer}/admin/faq/item`,
 
 
 
