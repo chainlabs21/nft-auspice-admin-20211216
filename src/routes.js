@@ -25,6 +25,7 @@ const StatState = React.lazy(() => import("./pages/statistics/StatState"));
 const StatInfo = React.lazy(() => import("./pages/statistics/StatInfo"));
 const Ranking = React.lazy(() => import("./pages/statistics/Ranking"));
 
+const Support = React.lazy(() => import("./pages/support/Support"));
 const Faq = React.lazy(() => import("./pages/support/Faq"));
 const Notice = React.lazy(() => import("./pages/support/Notice"));
 const NoticeDetail = React.lazy(() => import("./pages/support/NoticeDetail"));
@@ -154,6 +155,12 @@ const routes = [
     exact: true,
     name: "FAQ 자주하는 질문",
     component: Faq,
+  },
+  {
+    path: "/support/ticket",
+    exact: true,
+    name: "1:1 문의",
+    component: Support
   },
   {
     path: "/setting/operate",

@@ -121,6 +121,7 @@ const Report = () => {
     setReportData([])
     axios.get(`${process.env.REACT_APP_API_SERVER}/queries/reportcategory`)
     .then((resp)=>{
+      console.log(resp)
       let {data} = resp;
       if(data){
         let {list} = data;
@@ -151,10 +152,11 @@ const Report = () => {
 
     axios.get(`${process.env.REACT_APP_API_SERVER}/report/rows`)
     .then((resp)=>{
+      console.log(resp)
       let {data} = resp;
       if(data){
         let {list} = data;
-        console.log(list)
+        
 
         list.map((v, i)=>{
           const callbackData = {

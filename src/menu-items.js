@@ -170,6 +170,13 @@ const chartData = {
           url: "/support/faq",
           level: 0,
         },
+        {
+          id:"ticket",
+          title: "1:1 문의",
+          type: "item",
+          url: "/support/ticket",
+          level: 0
+        },
       ],
     },
     {

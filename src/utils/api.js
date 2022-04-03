@@ -27,6 +27,8 @@ export const API = {
   //DELETE: /:id
   FAQ_ITEM: `${apiServer}/admin/faq/item`,
 
+  TICKETS: `${apiServer}/admin/ticket`,
+
 
 
   API_ADMIN_CHECK: `${apiServer}/admin/check`,
