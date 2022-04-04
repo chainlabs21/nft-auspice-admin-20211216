@@ -43,6 +43,7 @@ const FunctionalTable = ({
   refresh = false,
   refreshCallback = () => {},
   search = false,
+  //picker = false,
   datePicker = false,
   excel = false,
   clean = false,
