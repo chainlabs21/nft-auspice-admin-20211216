@@ -46,8 +46,26 @@ const NoticeDetail = () => {
   const [html, setHtml] = useState("");
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(true);
+  const [edit, setEdit] = useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
+
+  useEffect(()=>{
+    if(!postId){return;}
+    else{
+      setEdit(true);
+      axios.get(`${process.env.REACT_APP_API_SERVER}/support/notice/${postId}`).then((resp)=>{
+        console.log(resp);
+
+        setKind(resp.data.list.isPopup);
+        setOpen(resp.data.list.active);
+        setLocked(resp.data.list.locked);
+        setLanguage(resp.data.list.lang);
+        setTitle(resp.data.list.title);
+        setHtml(resp.data.list.contentbody);
+      })
+    }
+  },[postId])
 
   function uploadAdapter(loader){
     return{
@@ -56,7 +74,7 @@ const NoticeDetail = () => {
           const body = new FormData();
           loader.file.then((file)=>{
             body.append("file", file);
-            axios.post(`http://itemverse1.net:32287/curation/upload/file/notice`, body)
+            axios.post(`${process.env.REACT_APP_API_SERVER}/curation/upload/file/notice`, body)
             .then((resp)=>{
               resolve({
                 default: resp.data.payload.url
@@ -102,8 +120,11 @@ const NoticeDetail = () => {
   const handleDelete = () => {
     //dispatch
     if (postId !== "new") {
+      axios.delete(`${process.env.REACT_APP_API_SERVER}/support/notice/${postId}`).then((resp)=>{
+        history.push("/support/notice/");
+      })
       dispatch({ type: DELETE_NOTICE, payload: { id: postId } });
-      history.push("/support/notice/");
+      
     } else {
       alert("새로운 공지는 삭제 할 수 없습니다.");
     }
@@ -112,10 +133,21 @@ const NoticeDetail = () => {
     history.push("/support/notice/");
   };
   const handleSubmit = () => {
-
-    axios.put(`${API.SET_CATEGORIES}/announcements`, {
+if(edit){
+  axios.put(`${process.env.REACT_APP_API_SERVER}/support/notice/${postId}`, {
+    isPopup: kind,
+    active: open,
+    lang: language,
+    title: title,
+    contentbody: html,
+    locked: locked,
+  }).then((resp)=>{
+    console.log(resp)
+    history.push("/support/notice/");
+  })
+}else{
+    axios.put(`${process.env.REACT_APP_API_SERVER}/support/notice`, {
       isPopup: kind,
-      category: 'notice',
       active: open,
       lang: language,
       title: title,
@@ -125,6 +157,7 @@ const NoticeDetail = () => {
       console.log(resp)
       history.push("/support/notice/");
     })
+  }
     //dispatch
     //create
     // const now = moment();
@@ -160,12 +193,7 @@ const NoticeDetail = () => {
 
   useEffect(() => {
     if (noticeList && postId !== "new") {
-      setKind(noticeList[postId].kind);
-      setOpen(noticeList[postId].open);
-      setLocked(noticeList[postId].popupOpen);
-      setLanguage(noticeList[postId].language);
-      setTitle(noticeList[postId].title);
-      setHtml(noticeList[postId].html);
+
     }
     setTimeout(() => {
       setLoading(false);
