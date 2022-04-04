@@ -71,6 +71,7 @@ const CategoryKeyList=[
   { title: "수정", hasCallback: true },
   { title: "신고 카테고리 명" },
 ]
+const statusOption =['정상', '검수중', '정책 위반']
 
 const stateOption = [
   { value: 0, label: "정상" },
@@ -79,9 +80,12 @@ const stateOption = [
 ];
 
 
+
+
 const ReportDetail = () => {
   const { itemList, todayRegister, totalRegister, mintingWait, totalMinting } =
     useSelector((state) => state.item);
+    const history = useHistory();
     const { search } = useLocation();
     const { reportId } = queryString.parse(search);
     const [createdAt, setCreatedAt] =useState();
@@ -96,6 +100,7 @@ const ReportDetail = () => {
     const [itemOwner, setItemOwner] = useState();
     const [chain, setChain] = useState();
     const [price, setPrice] = useState();
+    const [itemId, setItemId]= useState();
 
   const dispatch = useDispatch();
 
@@ -111,16 +116,32 @@ const ReportDetail = () => {
       setReportCategory(list[0].category);
       setReportDesc(list[0].description)
       /////////////////////////////////////
-      setReportStatus(list[0].item_info.status);
+      setReportStatus(stateOption[parseInt(list[0].status)]);
       ///////////////////////////////////////////
       setItemImage(list[0].item_info.url);
       setItemCreatedAt(list[0].item_info.createdat)
       setItemName(list[0].item_info.titlename);
-      setItemOwner(list[0].item_info.author);
+      setItemOwner(list[0].item_info.author_info.nickname);
+      setItemId(list[0].itemid)
       setChain(list[0].item_info.priceunit)
       setPrice(list[0].item_info.pricemax)
     })
   },[reportId])
+
+  function handleClose(){
+    history.push("/report");
+  }
+
+  function handleSubmit(){
+    axios.put(`${process.env.REACT_APP_API_SERVER}/report/${reportId}`,{status: reportStatus.value, itemid: itemId}).then((resp)=>{ // report.js from serve
+      console.log(resp)
+      history.push("/report");
+    })
+  }
+
+  useEffect(()=>{
+    console.log(reportStatus);
+  },[reportStatus])
 
   return (
     <Container fluid>
@@ -201,17 +222,109 @@ const ReportDetail = () => {
                 </div>
               </RowWrapper>
             </Card.Header>
+            <Card.Body>
+            <RowWrapper>
+                <div className="key">
+                  <p>검수 결과 '{statusOption[reportStatus]}</p>
+                  <p>:</p>
+                </div>
+
+                <div className="value">
+                
+                <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={stateOption}
+                    value={reportStatus}
+                    name="color"
+                    options={stateOption}
+                    onChange={
+                      setReportStatus
+                    }
+                  />
+                </div>
+              </RowWrapper>
+            </Card.Body>
+            <Card.Body style={{borderTop:'solid 1px #E2E5E8'}}>
+              <ItemBox>
+                <div className="imagebox">
+                <img className="image" src={itemImage} alt=''/>
+                </div>
+                <div className="descbox">
+                <RowWrapper style={{marginTop:'0'}}>
+                <div className="key">
+                  <p>등록일</p>
+                  <p>:</p>
+                </div>
+                <div className="value">
+                  <Form.Control
+                    readOnly
+                    value={itemCreatedAt}
+                  ></Form.Control>
+                </div>
+              </RowWrapper>
+              <RowWrapper>
+                <div className="key">
+                  <p>이름</p>
+                  <p>:</p>
+                </div>
+                <div className="value">
+                  <Form.Control
+                    readOnly
+                    value={itemName}
+                  ></Form.Control>
+                </div>
+              </RowWrapper>
+              <RowWrapper>
+                <div className="key">
+                  <p>작가</p>
+                  <p>:</p>
+                </div>
+                <div className="value">
+                  <Form.Control
+                    readOnly
+                    value={itemOwner}
+                  ></Form.Control>
+                </div>
+              </RowWrapper>
+              <RowWrapper>
+                <div className="key">
+                  <p>코인</p>
+                  <p>:</p>
+                </div>
+                <div className="value">
+                  <Form.Control
+                    readOnly
+                    value={chain}
+                  ></Form.Control>
+                </div>
+              </RowWrapper>
+              <RowWrapper>
+                <div className="key">
+                  <p>가격</p>
+                  <p>:</p>
+                </div>
+                <div className="value">
+                  <Form.Control
+                    readOnly
+                    value={price}
+                  ></Form.Control>
+                </div>
+              </RowWrapper>
+                </div>
+              </ItemBox>
+            </Card.Body>
 
             <Card.Footer>
               <Container>
                 <Row>
                   <Col style={{ textAlign: "center" }}>
                     <div>
-                      <ButtonWrapper variant="danger">
-                        삭제
+                      <ButtonWrapper variant="danger" onClick={()=>{handleClose()}}>
+                        닫기
                       </ButtonWrapper>
 
-                      <ButtonWrapper variant="secondary">
+                      <ButtonWrapper variant="secondary" onClick={()=>{handleSubmit()}}>
                         확인
                       </ButtonWrapper>
                     </div>
@@ -229,6 +342,20 @@ export default ReportDetail;
 
 const ButtonWrapper = styled(Button)`
   margin-right: 30px;
+`;
+
+const ItemBox = styled.div`
+justify-content: center;
+display: flex;
+gap: 20px;
+.imagebox{
+height: 254px;
+.image{
+  height: 100%;
+}
+}
+.descbox
+flex:1;
 `;
 
 const RowWrapper = styled.div`

@@ -117,8 +117,12 @@ const Report = () => {
   }, [itemList]);
 
   useEffect(()=>{
+    fetch_category()
+    fetch_reports();
+  },[])
+
+  function fetch_category(){
     setCategoryData([])
-    setReportData([])
     axios.get(`${process.env.REACT_APP_API_SERVER}/queries/reportcategory`)
     .then((resp)=>{
       console.log(resp)
@@ -127,7 +131,7 @@ const Report = () => {
         let {list} = data;
 
         list.map((v, i)=>{
-          if(i==0){return}
+          if(i==0){return;}
           const callbackData = {
             icon: <TiSpanner style={{ fontSize: "24px" }} />,
             callback: (index) => {
@@ -149,11 +153,14 @@ const Report = () => {
         })
       }
     })
+  }
 
+  function fetch_reports(){
+    setReportData([])
     axios.get(`${process.env.REACT_APP_API_SERVER}/report/rows`)
-    .then((resp)=>{
-      console.log(resp)
-      let {data} = resp;
+    .then((resper)=>{
+      console.log(resper)
+      let {data} = resper;
       if(data){
         let {list} = data;
         
@@ -186,7 +193,7 @@ const Report = () => {
         })
       }
     })
-  },[])
+  }
 
   return (
     <Container fluid>
