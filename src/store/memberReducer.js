@@ -1,4 +1,5 @@
 import moment from "moment";
+import produce from "immer";
 
 export const initialState = {
   currentUser: {
@@ -50,8 +51,14 @@ export const initialState = {
   ],
 };
 
+export const SET_CURRENT_USER="currentuser"
+
 const memberReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_CURRENT_USER:
+    return produce(state, (draft) => {
+      draft.currentUser = action.payload;
+    });
     default:
       return state;
   }

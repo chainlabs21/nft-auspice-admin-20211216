@@ -19,6 +19,9 @@ export const API = {
   SWAP_ITEMS: `${apiServer}/admin/featured/swap`,
   DELETE_ITEMS: `${apiServer}/curation/delete`,
   GET_NOTICES: `${apiServer}/admin/findcount/announcements`,
+  GET_USER_DETAIL: (username, type, size, off=0)=> `${apiServer}/admin/userinfo/${username}/${type}/${off}/${size}`,
+  STATISTICS:(type, from=0, to=0)=>`${apiServer}/stats/${type}/${from}/${to}`,
+  GET_KLAY:`${apiServer}/stats/tickers/USDT`,
 
   FAQ_CATEGORY: `${apiServer}/admin/faq/category`,
   //PUT   : {*id, *textdisp, lang, *state}

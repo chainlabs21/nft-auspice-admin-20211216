@@ -29,13 +29,13 @@ const chartData = {
           url: "/member/state",
           level: 0,
         },
-        {
-          id: "memberInfo",
-          title: "회원상세",
-          type: "item",
-          url: "/member/info",
-          level: 0,
-        },
+        // {
+        //   id: "memberInfo",
+        //   title: "회원상세",
+        //   type: "item",
+        //   url: "/member/info",
+        //   level: 0,
+        // },
       ],
     },
     {

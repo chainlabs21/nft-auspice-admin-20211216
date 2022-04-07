@@ -13,6 +13,7 @@ const Configuration = () => {
   const { showMemberSlider } = useSelector((state) => state.ui);
   const [configOpen, setConfigOpen] = useState(false);
   const [imageToggle, setImageToggle] = useState(false);
+  const [isProf, setisProf]=useState(false);
   let configClass = ["menu-styler"];
   if (configOpen) {
     configClass = [...configClass, "open"];
@@ -26,7 +27,7 @@ const Configuration = () => {
           <div id="styleSelector" className={configClass.join(" ")}>
             <div className="style-toggler">
               <a
-                href={"/#/member/info"}
+                //href={"/#/member/info"}
                 onClick={() => setConfigOpen(!configOpen)}
               >
                 <BsPersonPlus size="40" />
@@ -54,13 +55,13 @@ const Configuration = () => {
                     </li>
                     <li>
                       <div className="key">Address :</div>
-                      <div className="value">{currentUser.address}</div>
+                      <div className="value" style={{width:'250px', textOverflow:'ellipsis', overflow:'hidden', display: 'block', whiteSpace:'nowrap', lineHeight:'40px'}}>{currentUser.address}</div>
                     </li>
                     <li>
                       <div className="key">닉네임 :</div>{" "}
                       <div className="value">{currentUser.nickname}</div>
                     </li>
-                    <li>
+                    {/* <li>
                       <div className="key">로열티 :</div>
                       <div className="value percentBox">
                         <span className="valueNum">{currentUser.royal}</span>
@@ -73,26 +74,33 @@ const Configuration = () => {
                         <span className="valueNum">{currentUser.refer}</span>
                         <span className="unit">판매금액의%</span>
                       </div>
-                    </li>
-                    <li>
-                      <div className="key">Collections :</div>
-                      <div className="value">{currentUser.collections}</div>
-                    </li>
+                    </li> */}
                     <li>
                       <div className="key">Items :</div>
                       <div className="value">{currentUser.items}</div>
                     </li>
-                    <li>
+                    {/* <li>
                       <div className="key">Rferral Link :</div>
                       <div className="value">{currentUser.referLink}</div>
+                    </li> */}
+                    <li>
+                      <div className="key">프로필이미지 :</div>
+                      <div
+                        className="value"
+                        style={{width:'250px', textOverflow:'ellipsis', overflow:'hidden', display: 'block', whiteSpace:'nowrap', lineHeight:'40px'}}
+                        onClick={() => {setImageToggle(true); setisProf(true)}}
+                      >
+                        {currentUser.profImage}
+                      </div>
                     </li>
                     <li>
                       <div className="key">배경이미지 :</div>
                       <div
                         className="value"
-                        onClick={() => setImageToggle(true)}
+                        style={{width:'250px', textOverflow:'ellipsis', overflow:'hidden', display: 'block', whiteSpace:'nowrap', lineHeight:'40px'}}
+                        onClick={() => {setImageToggle(true);setisProf(false)}}
                       >
-                        background.png
+                        {currentUser.coverImage}
                       </div>
                     </li>
                     <li>
@@ -111,7 +119,7 @@ const Configuration = () => {
                     <Row>
                       <Col style={{ marginBottom: "2rem" }}>
                         <span className="imgBox">
-                          <img src={gameItem} alt="background" />
+                          <img src={isProf?currentUser.profImage:currentUser.coverImage} alt="background" />
                         </span>
                       </Col>
                     </Row>

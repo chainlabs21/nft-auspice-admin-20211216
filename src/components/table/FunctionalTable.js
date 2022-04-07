@@ -45,11 +45,13 @@ const FunctionalTable = ({
   search = false,
   //picker = false,
   datePicker = false,
+  external = false,
   excel = false,
   clean = false,
   onSelect =()=>{},
+  onDate =()=>{},
   selectItem,
-  selectCreateItem
+  selectCreateItem,
 }) => {
   const [dataArr, setDataArr] = useState([]);
   const [showCount, setShowCount] = useState(20);
@@ -91,7 +93,8 @@ const FunctionalTable = ({
       alert("유효한 날짜를 선택해 주십시오.");
       return;
     }
-    sortSearching();
+    if(external){console.log('asdf');onDate([fromDate, toDate])}
+    else{sortSearching();}
   };
   const handleFilter = () => {
     sortSearching();
@@ -667,11 +670,25 @@ const FunctionalTable = ({
                               return (
                                 <td key={j}>
                                   <a
-                                    target="_blank"
+                                    //target="_blank"
                                     rel="noreferrer"
                                     href={`${refinedKeyList[j].href + v}`}
+                                    //onClick={()=>{window.location.reload()}}
                                   >
                                     {v}
+                                  </a>
+                                </td>
+                              );
+                            }
+                            if (refinedKeyList[j].diffhref) {
+                              return (
+                                <td key={j}>
+                                  <a
+                                    //target="_blank"
+                                    rel="noreferrer"
+                                    href={`${refinedKeyList[j].diffhref + v[1]}`}
+                                  >
+                                    {v[0] || "-"}
                                   </a>
                                 </td>
                               );
