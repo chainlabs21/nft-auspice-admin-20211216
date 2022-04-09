@@ -42,6 +42,7 @@ const StatInfo = () => {
     axios.get(`${API.GET_KLAY}`).then((r)=>{
       setKlayprice(r.data.list.KLAY)
     })
+    fetch_data_duration([moment('2021-02-12'), moment()])
   },[])
 
   useEffect(() => {
@@ -64,6 +65,7 @@ const StatInfo = () => {
     //const eableData = JsonToTableData(monthDetail[0].ref, refKeyToValue);
     //setRefData(eableData);
   }, [monthSummary, monthDetail]);
+  
 
   useEffect(() => {
     setCurTableData([])
@@ -87,7 +89,7 @@ const StatInfo = () => {
               status: v.txhash?"완료": "미완료",
               priceunit: v.item_info?.priceunit,
               amount: v.price || 0,
-              usdamount: v.price*klayprice || 0,
+              usdamount: v.price*klayprice.toFixed(2) || 0,
               from: v.from_,
               to: v.to_,
               tx: v.txhash
@@ -112,7 +114,7 @@ const StatInfo = () => {
               price: v.fee_item_info?.pricemax || 0,
               priceunit: v.fee_item_info?.priceunit || 'KLAY',
               buyprice: v.feed_order?.price,
-              usdprice: v.feed_order?.price * klayprice,
+              usdprice: v.feed_order?.price * klayprice.toFixed(2),
               fee: v.amount,
               from: v.contract,
               to: v.receiver,
@@ -137,12 +139,12 @@ const StatInfo = () => {
               itemname: [v.fee_item_info?.titlename, v.itemid],
               token: v.fee_item_info?.priceunit || "-",
               buyprice: v.feed_order?.price,
-              usdprice: v.feed_order?.price * klayprice,
+              usdprice: v.feed_order?.price * klayprice.toFixed(2),
               from: v.contract,
               to: v.receiver,
               royaltoken: v.fee_item_info?.priceunit || "-",
               fee: v.amount,
-              feeusd: v.amount * klayprice,
+              feeusd: v.amount * klayprice.toFixed(2),
               success: v.txhash?1: 0,
               tx: v.txhash
 
@@ -172,11 +174,11 @@ const StatInfo = () => {
         duration: fromDate.format('YYYY-MM-DD')+" ~ "+ toDate.format('YYYY-MM-DD'),
         members: data[2].count,
         tradecount: data[3].count,
-        tradeamount: data[3].rows[0]?.pricesum || 0,
+        tradeamount: data[3].rows[0]?.pricesum*klayprice.toFixed(2) || 0,
         feecount: data[0].count,
-        feeamount: data[0].rows[0]?.feesum || 0,
+        feeamount: data[0].rows[0]?.feesum*klayprice || 0,
         royaltycount: data[1].count,
-        royaltyamount: data[1].rows[0]?.royaltysum || 0
+        royaltyamount: data[1].rows[0]?.royaltysum*klayprice.toFixed(2) || 0
 
       }])
     })

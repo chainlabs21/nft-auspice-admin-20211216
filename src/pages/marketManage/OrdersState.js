@@ -11,7 +11,7 @@ import GeneralPagination from '../../utils/Pagination'
 
 const keyList = [
     { title: "no" },
-    { title: "이미지" },
+    { title: "이미지", isImage: true},
     { title: "등록일", isDate: true },
     { title: "수정일", isDate: true },
     { title: "아이템 명", href: WALLET_QUERY_URL, search: true },

@@ -354,8 +354,9 @@ height: 254px;
   height: 100%;
 }
 }
-.descbox
+
 flex:1;
+
 `;
 
 const RowWrapper = styled.div`

@@ -10,6 +10,7 @@ import axios from "axios";
 import {API} from "../../utils/api"
 import { useDispatch } from "react-redux";
 import { SET_TODAY_STAT, SET_ALL_STAT } from "../../store/statisticsReducer";
+import moment from "moment";
 
 const overAllKeyList = [
   { title: "분류" },
@@ -75,6 +76,12 @@ const StatState = () => {
   const [totalTableData, setTotalTableData] = useState([]);
   const [monthTableData, setMonthTableData] = useState([]);
   const [todayStat, setTodayStat] = useState([]);
+  const [monthTable, setMonthTable] = useState([]);
+  const [monthFee, setMonthFee] = useState([]);
+  const [monthRoyal, setMonthRoyal] = useState([]);
+  const [monthPop, setMonthPop] = useState([]);
+  const [monthPrice, setMonthPrice] = useState([]);
+  const [klayprice, setKlayprice] = useState();
   useEffect(() => {
     const todayData = JsonToTableData(overallData.today, keyToValue);
     const allData = JsonToTableData(overallData.all, keyToValue);
@@ -88,10 +95,39 @@ const StatState = () => {
   }, [overallData, monthData]);
 
   useEffect(()=>{
-    axios.get(API.STATISTICS('month')).then((res)=>{
-      console.log(res)
+    axios.get(`${API.GET_KLAY}`).then((r)=>{
+      setKlayprice(r.data.list.KLAY)
     })
-  })
+    get_monthTable('2021-12-01', moment())
+  },[])
+
+  function get_monthTable(from, to){
+    axios.get(API.STATISTICS('month',moment(from).startOf('month').format('YYYY-MM-DD'), moment(to).endOf('month').format('YYYY-MM-DD'))).then((res)=>{
+      let {wholedata} = res.data;
+      setMonthTable([])
+      wholedata.forEach((v)=>{
+        console.log(v)
+        Object.keys(v).forEach((val)=>{
+          //console.log(v[val])
+          const map={
+            date: val,
+            pop: v[val][2][0].usercount,
+            pricecount: v[val][3][0].pricecount,
+            pricesum: v[val][3][0].pricesum || 0,
+            feecount: v[val][0][0].feecount,
+            feesum: v[val][0][0].feesum || 0,
+            royalcount: v[val][1][0].royalcount,
+            royalsum: v[val][1][0].royalsum || 0,
+          }
+          setMonthTable(pre=>[...pre, map])
+        })
+      })
+    })
+  }
+ 
+  useEffect(()=>{
+    console.log(monthTable)
+  },[monthTable])
 
   useEffect(()=>{
     axios.get(API.STATISTICS('day', '1')).then((resp)=>{
@@ -161,7 +197,9 @@ const StatState = () => {
           <SubTitleWrapper>월별 통계</SubTitleWrapper>
           <FunctionalTable
             datePicker
-            tableData={monthTableData}
+            external
+            onDate={(e)=>get_monthTable(e[0], e[1])}
+            tableData={monthTable}
             keyList={monthKeyList}
           />
         </Col>
