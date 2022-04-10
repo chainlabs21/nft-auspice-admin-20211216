@@ -4,6 +4,7 @@ import PageTitle from "../../components/PageTitle";
 import axios from "axios";
 import { API } from "../../utils/api";
 import { SET_LOGIN, SET_LEVEL } from "../../store/adminReducer";
+import crypto from "crypto";
 import {
     Form,
     Modal,
@@ -19,10 +20,11 @@ import { prependOnceListener } from "process";
 import { propTypes } from "react-bootstrap/esm/Image";
 
 const Login=()=>{
+    const secret ="ESREVMETI"
     const dispatch = useDispatch();
     const [account, setaccount]=useState('');
     const [password, setpass]=useState('');
-
+    
     /*useEffect(async ()=>{
         console.log("onload asdadsasdas"+axios.defaults.headers.common['Authorization'])
         await axios.get(API.API_ADMIN_CHECK)
@@ -42,18 +44,22 @@ const Login=()=>{
 
     },[])*/
 
-    const AdminLogin=()=>{
+    const AdminLogin= ()=>{
         if (account && password){}else{alert('정보 없음');return;}
         try{
-            let data = {account: account, hashpassword: password};
+            const pwhash = crypto.createHmac('sha256', secret).update(password).digest('hex');
+            console.log(pwhash)
+            let data = {account: account, hashpassword: pwhash};
             console.log(data)
             axios.post(API.API_ADMIN_LOGIN, data)
             .then(res=>{
                 console.log(res);
                 if (res.data.status=="OK"){
-                    console.log("res.data.accessToken : "+ res.data.respdata);
-                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.respdata;
-                    
+                    console.log("res.data.accessToken : "+ res.data.payload);
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.payload;
+                    localStorage.setItem('token', res.data.payload);
+                    localStorage.setItem('token', res.data.account);
+                    //localStorage.setItem('account') = 
                     dispatch({ type: SET_LEVEL, payload: {value: res.data.data}})
                     dispatch({ type: SET_LOGIN, payload: { value: true } });
                     //console.log("asdadsasdas"+axios.defaults.headers.common['Authorization'])
@@ -67,6 +73,13 @@ const Login=()=>{
 
         }
     }
+    useEffect(()=>{
+        const token = localStorage.getItem('token');
+        const account = localStorage.getItem('account');
+        axios.get(`${API.API_ADMIN_LOGIN}/${account}/${token}`).then((resp)=>{
+            console.log(resp)
+        })
+    }, [])
 
 
 

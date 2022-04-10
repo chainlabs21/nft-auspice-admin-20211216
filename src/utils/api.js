@@ -32,6 +32,10 @@ export const API = {
 
   TICKETS: `${apiServer}/admin/ticket`,
 
+  CREATE_ADMIN: `${apiServer}/admin/join`,
+  GET_ADMIN: `${apiServer}/admin/list`,
+  DELETE_ADMIN: `${apiServer}/admin/account`,
+
 
 
   API_ADMIN_CHECK: `${apiServer}/admin/check`,

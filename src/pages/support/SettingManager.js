@@ -1,4 +1,5 @@
 import { Col, Row, Container, Button, Modal, Form } from "react-bootstrap";
+import crypto from "crypto";
 import { JsonToTableData } from "../../utils/tableUtils";
 import FunctionalTable from "../../components/table/FunctionalTable";
 import { useEffect, useState } from "react";
@@ -7,9 +8,10 @@ import { TiSpanner } from "react-icons/ti";
 import Select from "react-select";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
-import { MODIFY_MANAGER, DELETE_MANAGER } from "../../store/managerReducer";
+import { MODIFY_MANAGER, DELETE_MANAGER, SET_MANAGER } from "../../store/managerReducer";
 import PageTitle from "../../components/PageTitle";
 import axios from "axios";
+import { API } from "../../utils/api";
 const stateOption = [
   { value: 0, label: "정지" },
   { value: 1, label: "정상" },
@@ -48,53 +50,100 @@ const SettingManage = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [prevId, setPrevId] = useState("");
+  const [nickname, setNickname] = useState("")
+  const [edit, setEdit] = useState(false)
+  const [atabledata, setatabledata] = useState([])
   const dispatch = useDispatch();
+  const secret ="ESREVMETI"
 
-  const callbackData = {
-    icon: <TiSpanner style={{ fontSize: "24px" }} />,
-    callback: (index) => {
-      setToggleSetting(true);
-      setCurIndex(index);
-      setOpenState(managerList[index].state);
-      setId(managerList[index].managerId);
-      setPwd(managerList[index].managerPwd);
-      setEmail(managerList[index].email);
-      setPhone(managerList[index].phone);
-      setPrevId(managerList[index].managerId);
-    },
-  };
 
-  useEffect(() => {
-    const temp = managerList;
-    const jsonData = JsonToTableData(temp, keyToValue);
-    jsonData.forEach((v, i) => {
-      v.splice(8, 0, callbackData);
-    });
-    setTableData(jsonData);
-  }, [managerList]);
+
+  function getManagerdata(){
+    setatabledata([])
+    axios.get(API.GET_ADMIN).then((resp)=>{
+      let {list} = resp.data
+      list.map((v, index)=>{
+        const callbackData = {
+          icon: <TiSpanner style={{ fontSize: "24px" }} />,
+          callback: (index) => {
+            setToggleSetting(true);
+            setCurIndex(v.id);
+            setOpenState(v.active);
+            setNickname(v.nickname)
+            setId(v.username);
+            setPwd(v.pw);
+            setEmail(v.email);
+            setPhone(v.phone);
+            setEdit(true)
+            //setPrevId(managerList[index].managerId);
+          },
+        };
+        const item = {
+          no: v.id,
+          createdAt: v.createdat,
+          updatedAt: v.updatedat,
+          managerId: v.username,
+          state: v.active,
+          managerPwd: v.pwhash,
+          email: v.email,
+          phone: v.phone,
+          callback: callbackData
+        }
+        setatabledata(pre=>[...pre, item])
+      })
+    })
+  }
+  useEffect(()=>{
+    getManagerdata()
+  },[])
 
   const handleDelete = () => {
     //dispatch
-    dispatch({ type: DELETE_MANAGER, payload: { managerId: id } });
+    setEdit(false)
+    //dispatch({ type: DELETE_MANAGER, payload: { managerId: id } });
+    if(edit){
+      axios.delete(`${API.DELETE_ADMIN}/${curIndex}`).then((res)=>{
+        getManagerdata()
+    })
     setToggleSetting(false);
+  }else{
+    setToggleSetting(false);
+  }
   };
   const handleSubmit = () => {
+    setEdit(false)
     //POST
-    //axios.post()
-
+    const pwhash = crypto.createHmac('sha256', secret).update(pwd).digest('hex');
     //dispatch
-    
-    dispatch({
-      type: MODIFY_MANAGER,
-      payload: {
-        prevId: prevId,
-        managerId: id,
-        state: openState,
-        managerPwd: pwd,
+    if(edit){
+      axios.post(API.CREATE_ADMIN, {
+        id: curIndex,
+        username: id,
+        nickname: nickname,
+        pw: pwd,
+        pwhash: pwhash,
         email: email,
-        phone: phone,
-      },
-    });
+        phone: phone
+      }).then((resp)=>{
+        console.log(resp)
+        getManagerdata()
+      
+      })
+    }else{
+      axios.post(API.CREATE_ADMIN, {
+        username: id,
+        nickname: nickname,
+        pw: pwd,
+        pwhash: pwhash,
+        email: email,
+        phone: phone
+      }).then((resp)=>{
+        console.log(resp)
+        getManagerdata()
+      })
+    }
+
+    
     
     setToggleSetting(false);
   };
@@ -116,6 +165,7 @@ const SettingManage = () => {
                 setToggleSetting(true);
                 setId("");
                 setPwd("");
+                setNickname("");
                 setEmail("");
                 setPhone("");
                 setPrevId("");
@@ -129,7 +179,7 @@ const SettingManage = () => {
           <FunctionalTable
             wrapName="tableHasNo"
             keyList={keyList}
-            tableData={tableData}
+            tableData={atabledata}
             refresh
             excel
           />
@@ -162,6 +212,15 @@ const SettingManage = () => {
                       <Form.Control
                         onChange={(e) => setId(e.target.value)}
                         value={id}
+                      ></Form.Control>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="key">닉네임 :</div>
+                    <div className="value">
+                      <Form.Control
+                        onChange={(e) => setNickname(e.target.value)}
+                        value={nickname}
                       ></Form.Control>
                     </div>
                   </li>
@@ -202,7 +261,7 @@ const SettingManage = () => {
 
             <Row className="actionBtnBox">
               <button className="redBtn" variant="danger" onClick={handleDelete}>
-                삭제
+                {edit?"삭제":"취소"}
               </button>
               <button className="grayBtn" variant="secondary" onClick={handleSubmit}>
                 확인

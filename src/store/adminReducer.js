@@ -1,7 +1,7 @@
 import produce from "immer";
 
 export const initialState = {
-    loggedin: true,
+    loggedin: false,
     level: 999
   };
 

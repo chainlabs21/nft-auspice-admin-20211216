@@ -1,6 +1,9 @@
 //import * as actionTypes from "./actions";
 import produce from "immer";
 import moment from "moment";
+import axios from "axios";
+import { API } from "../utils/api";
+var lists=[];
 const mokup = [
   {
     no: 1,
@@ -12,38 +15,42 @@ const mokup = [
     email: "email@email.com",
     phone: "010-2323-4151",
   },
-  {
-    no: 2,
-    createdAt: moment().format("2021-06-12 09:50:11"),
-    updatedAt: moment().format("2021-06-12 09:50:11"),
-    managerId: "identity02",
-    state: 1,
-    managerPwd: "$12495asdx",
-    email: "email@email.com",
-    phone: "010-2323-4151",
-  },
-  {
-    no: 3,
-    createdAt: moment().format("2021-06-12 09:50:11"),
-    updatedAt: moment().format("2021-06-12 09:50:11"),
-    managerId: "identity03",
-    state: 1,
-    managerPwd: "$12495asdx",
-    email: "email@email.com",
-    phone: "010-2323-4151",
-  },
 ];
 
+
 export const initialState = {
-  managerList: mokup,
+  managerList: lists,
 };
 // payload {prevId: string,state:int ,managerId : string, managerPwd: string, email: string, phone: string}
 export const MODIFY_MANAGER = "MODIFY_MANAGER";
 // playload {managerId: string}
 export const DELETE_MANAGER = "DELETE_MANAGER";
 
+export const SET_MANAGER = "SET_MANAGER"
+
 const managerReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_MANAGER:
+      return produce(state, (draft)=>{
+        axios.get(API.GET_ADMIN).then((resp)=>{
+          let {list} = resp.data
+          list.map((v, i)=>{
+
+            const item = {
+              no: v.id,
+              createdAt: v.createdat,
+              updatedAt: v.updatedat,
+              managerId: v.username,
+              state: v.active,
+              managerPwd: v.pwhash,
+              email: v.email,
+              phone: v.phone
+            }
+            
+          })
+          draft.managerList.push(list)
+        })
+      })
     case DELETE_MANAGER:
       return produce(state, (draft) => {
         const index = draft.managerList.findIndex((v) => {
@@ -72,17 +79,28 @@ const managerReducer = (state = initialState, action) => {
         }
         //CREATE
         else {
-          const temp = {
-            no: draft.managerList.length,
-            createdAt: now.format("2021-06-12 09:50:11"),
-            updatedAt: now.format("2021-06-12 09:50:11"),
-            managerId: action.payload.managerId,
-            state: action.payload.state,
-            managerPwd: action.payload.managerPwd,
-            email: action.payload.email,
-            phone: action.payload.phone,
-          };
-          draft.managerList.push(temp);
+          // axios.post(API.CREATE_ADMIN, {
+          //   username: action.payload.managerId,
+          //   nickname: action.payload.nickname,
+          //   pw: action.payload.managerPwd,
+          //   pwhash: action.payload.pwhash,
+          //   email: action.payload.email,
+          //   phone: action.payload.phone
+          // }).then(()=>{
+          //   const temp = {
+          //     no: draft.managerList.length,
+          //     createdAt: now.format("2021-06-12 09:50:11"),
+          //     updatedAt: now.format("2021-06-12 09:50:11"),
+          //     managerId: action.payload.managerId,
+          //     state: action.payload.state,
+          //     managerPwd: action.payload.managerPwd,
+          //     email: action.payload.email,
+          //     phone: action.payload.phone,
+          //   };
+          //   draft.managerList.push(temp);
+
+          // })
+          
         }
       });
     default:
