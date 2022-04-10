@@ -1,5 +1,21 @@
 const chartData = {
+  
   items: [
+    {
+      id: "account",
+      title: "계정관리",
+      type: "group",
+      level: 0,
+      children: [
+        {
+          id: "logout",
+          title: "로그아웃",
+          type: "item",
+          url: "/logout",
+          level: 0,
+        },
+      ],
+    },
     {
       id: "general",
       title: "일반",

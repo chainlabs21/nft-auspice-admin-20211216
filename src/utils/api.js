@@ -39,6 +39,7 @@ export const API = {
 
 
   API_ADMIN_CHECK: `${apiServer}/admin/check`,
-  API_ADMIN_LOGIN: `${apiServer}/admin/login`
+  API_ADMIN_LOGIN: `${apiServer}/admin/login`,
+  API_ADMIN_LOGOUT: `${apiServer}/admin/logout`
 
 };

@@ -90,8 +90,8 @@ const StatInfo = () => {
               priceunit: v.item_info?.priceunit,
               amount: v.price || 0,
               usdamount: v.price*klayprice.toFixed(2) || 0,
-              from: v.from_,
-              to: v.to_,
+              from: v.from_ || v.buyer,
+              to: v.to_ || v.seller,
               tx: v.txhash
 
             }])
@@ -114,7 +114,7 @@ const StatInfo = () => {
               price: v.fee_item_info?.pricemax || 0,
               priceunit: v.fee_item_info?.priceunit || 'KLAY',
               buyprice: v.feed_order?.price,
-              usdprice: v.feed_order?.price * klayprice.toFixed(2),
+              usdprice: v.feed_order?.price * klayprice,
               fee: v.amount,
               from: v.contract,
               to: v.receiver,
@@ -139,12 +139,12 @@ const StatInfo = () => {
               itemname: [v.fee_item_info?.titlename, v.itemid],
               token: v.fee_item_info?.priceunit || "-",
               buyprice: v.feed_order?.price,
-              usdprice: v.feed_order?.price * klayprice.toFixed(2),
+              usdprice: v.feed_order?.price * klayprice,
               from: v.contract,
               to: v.receiver,
               royaltoken: v.fee_item_info?.priceunit || "-",
               fee: v.amount,
-              feeusd: v.amount * klayprice.toFixed(2),
+              feeusd: v.amount * klayprice,
               success: v.txhash?1: 0,
               tx: v.txhash
 
@@ -174,11 +174,11 @@ const StatInfo = () => {
         duration: fromDate.format('YYYY-MM-DD')+" ~ "+ toDate.format('YYYY-MM-DD'),
         members: data[2].count,
         tradecount: data[3].count,
-        tradeamount: data[3].rows[0]?.pricesum*klayprice.toFixed(2) || 0,
+        tradeamount: data[3].rows[0]?.pricesum*klayprice || 0,
         feecount: data[0].count,
         feeamount: data[0].rows[0]?.feesum*klayprice || 0,
         royaltycount: data[1].count,
-        royaltyamount: data[1].rows[0]?.royaltysum*klayprice.toFixed(2) || 0
+        royaltyamount: data[1].rows[0]?.royaltysum*klayprice || 0
 
       }])
     })

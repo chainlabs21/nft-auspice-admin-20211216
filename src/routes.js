@@ -3,6 +3,7 @@ import * as React from "react";
 //Pages
 const MemberState = React.lazy(() => import("./pages/member/MemberState"));
 const Login = React.lazy(() => import("./pages/admin/Login"));
+const Logout = React.lazy(() => import("./pages/admin/Logout"));
 const MemberInfo = React.lazy(() => import("./pages/member/MemberInfo"));
 const ItemState = React.lazy(() => import("./pages/marketManage/ItemState"));
 const OrdersState = React.lazy(() => import("./pages/marketManage/OrdersState"));
@@ -47,6 +48,12 @@ const routes = [
     exact: true,
     name: "로그인",
     component: Login
+  },
+  {
+    path: "/logout",
+    exact: true,
+    name: "로그아웃",
+    component: Logout
   },
   {
     path: "/dashboard/",
